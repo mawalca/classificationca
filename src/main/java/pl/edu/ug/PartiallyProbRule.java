@@ -11,7 +11,7 @@ public class PartiallyProbRule extends Rule {
 
         if (img[row][col] != 0) return img[row][col];
 
-        Map<Byte, Byte> countedClasses = countClasses(img, row, col);
+        Map<Byte, Integer> countedClasses = countClasses(img, row, col);
 
         int all = countedClasses.get((byte)1) + countedClasses.get((byte)2);
         double p1 = countedClasses.get((byte)1) * 1.0 / all;

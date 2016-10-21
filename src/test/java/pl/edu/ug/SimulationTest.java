@@ -17,14 +17,6 @@ public class SimulationTest {
     public void simulationTest() {
 
 
-        List<Rule> rules = new ArrayList<>();
-        //rules.add(fpRule);
-        rules.add(ppRule);
-
-        Simulation simulation = new Simulation(diagonalImg, rules, 1, 99);
-        simulation.run();
-
-
     }
 
 }

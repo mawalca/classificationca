@@ -73,15 +73,15 @@ public class Simulation {
 
                 finalImages.add(finalImage);
 
-                System.out.println("\nPROBA: " + t);
-                System.out.println("Iterations: " + (iterations.size() - 2));
+              //  System.out.println("\nPROBA: " + t);
+              //  System.out.println("Iterations: " + (iterations.size() - 2));
 
                 int diff = Utils.imgDiff(img, finalImage);
-                System.out.println("Diff: " + diff);
+             //   System.out.println("Diff: " + diff);
                 diffs[t] = diff;
 
                 avgImage = Utils.avgImg(finalImages);
-                System.out.println("Avg img: " + Utils.imgDiff(img, avgImage));
+             //   System.out.println("Avg img: " + Utils.imgDiff(img, avgImage));
 
                 //System.out.println(byteMatrixToString(avgImage));
             }

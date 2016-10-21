@@ -1,7 +1,6 @@
 package pl.edu.ug;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 public abstract class Rule {
 
@@ -10,7 +9,7 @@ public abstract class Rule {
     abstract public byte step(byte[][] img, int row, int col);
 
     // returns Map 0 -> # class 0, 1 -> #class 1, itp.
-    public static Map<Byte, Byte> countClasses(byte[][] img, int row, int col) {
+    public Map<Byte, Integer> countClasses(byte[][] img, int row, int col) {
         int cols = img[0].length;
         int rows = img.length;
 
@@ -91,12 +90,12 @@ public abstract class Rule {
         return count(neigh);
     }
 
-    private static Map<Byte, Byte> count(List<Byte> neigh){
-        Map<Byte, Byte> result = new HashMap<>();
-        result.put((byte)0, (byte)0);
-        result.put((byte)1, (byte)0);
-        result.put((byte)2, (byte)0);
-        neigh.forEach(value -> result.put(value, (byte)(result.get(value) + 1)));
+    protected static Map<Byte, Integer> count(List<Byte> neigh){
+        Map<Byte, Integer> result = new HashMap<>();
+        result.put((byte)0, 0);
+        result.put((byte)1, 0);
+        result.put((byte)2, 0);
+        neigh.forEach(value -> result.put(value, result.get(value) + 1));
         return result;
     }
 }
