@@ -102,4 +102,12 @@ public class Utils {
         }
         return result;
     }
+
+    public static void awtPrintSResults(List<SimResult> results){
+
+        results.stream().forEach(simResult -> {
+            new AwtViewerAll(simResult);
+        });
+
+    }
 }

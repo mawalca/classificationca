@@ -1,23 +1,28 @@
 package pl.edu.ug;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import pl.edu.ug.rule.Rule;
 
 import java.util.*;
 
 public class Simulation {
 
-    byte[][] img;
+    private byte[][] img;
     private List<Rule> rules;
     private int showPercent;
-    final AwtViewer viewer;
+    //final AwtViewer viewer;
 
-    int cols;
-    int rows;
+    private List<SimResult> simResults;
+
+    private int cols;
+    private int rows;
 
     Map<Rule, List<byte[][]>> results;
     int tries;
 
-    public Simulation(byte[][] img, List<Rule> rules, int showPercent, int tries) {
+    private Random rand = new Random();
+
+    public Simulation(byte[][] img, List<Rule> rules, int showPercent, int tries, List<SimResult> simResults) {
         this.img = img;
         this.rules = rules;
         this.showPercent = showPercent;
@@ -28,8 +33,8 @@ public class Simulation {
         this.cols = img[0].length;
         this.rows = img.length;
 
-        this.viewer = new AwtViewer(rows, cols);
-
+        //this.viewer = new AwtViewer(rows, cols);
+        this.simResults = simResults;
     }
 
     public void run() {
@@ -38,9 +43,10 @@ public class Simulation {
 
         rules.stream().forEach(rule -> {
 
-            System.out.println("\nRule: " + rule);
+            //System.out.println("\nRule: " + rule);
 
             List<byte[][]> finalImages = new ArrayList<>();
+
             int[] diffs = new int[tries];
             byte[][] avgImage = hiddenImg;
 
@@ -73,6 +79,7 @@ public class Simulation {
 
                 finalImages.add(finalImage);
 
+
               //  System.out.println("\nPROBA: " + t);
               //  System.out.println("Iterations: " + (iterations.size() - 2));
 
@@ -80,12 +87,8 @@ public class Simulation {
              //   System.out.println("Diff: " + diff);
                 diffs[t] = diff;
 
-                avgImage = Utils.avgImg(finalImages);
-             //   System.out.println("Avg img: " + Utils.imgDiff(img, avgImage));
-
                 //System.out.println(byteMatrixToString(avgImage));
             }
-
 
             DescriptiveStatistics stats = new DescriptiveStatistics();
 
@@ -99,18 +102,23 @@ public class Simulation {
             double std = stats.getStandardDeviation();
             //double median = stats.getPercentile(50);
 
-            System.out.println("Mean " + mean + " " + " Std: " + std);
+            //System.out.println("Mean " + mean + " " + " Std: " + std);
             //System.out.println(byteMatrixToString(hiddenImg));
 
+            avgImage = Utils.avgImg(finalImages);
+            int avgDiff = Utils.imgDiff(img, avgImage);
+            //System.out.println("Avg img: " + avgDiff);
 
-            viewer.drawArray(avgImage);
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            // Gather some samples
+            List<byte[][]> samples = new ArrayList<>();
+
+            if (3 < tries) {
+                rand.ints(3, 0, tries).forEach(i -> samples.add(finalImages.get(i)));
             }
 
-
+            SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, avgDiff);
+            simResults.add(simResult);
+            System.out.println(simResult);
         });
     }
 

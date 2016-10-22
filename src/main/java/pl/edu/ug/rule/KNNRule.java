@@ -1,4 +1,4 @@
-package pl.edu.ug;
+package pl.edu.ug.rule;
 
 import org.apache.commons.math3.ml.distance.DistanceMeasure;
 
@@ -78,7 +78,9 @@ public class KNNRule extends Rule {
 
     @Override
     public String toString() {
-        return "kNN Rule: k = " + k + " Metric " + dm.toString();
+        String className = dm.toString().split("@")[0];
+        String[] parts = className.split("\\.");
+        return "Rule: kNN k = " + k + " Metric: " + parts[parts.length - 1];
     }
 }
 

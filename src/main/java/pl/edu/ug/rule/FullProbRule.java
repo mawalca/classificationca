@@ -1,4 +1,4 @@
-package pl.edu.ug;
+package pl.edu.ug.rule;
 
 import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 
@@ -38,6 +38,6 @@ public class FullProbRule extends Rule {
 
     @Override
     public String toString() {
-        return "Fully Probabilistic Rule";
+        return "Rule: Fully Probabilistic";
     }
 }

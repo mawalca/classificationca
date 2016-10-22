@@ -1,10 +1,9 @@
 package pl.edu.ug;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
+import pl.edu.ug.rule.FullProbRule;
+import pl.edu.ug.rule.PartiallyProbRule;
+import pl.edu.ug.rule.Rule;
 
 public class SimulationTest {
 

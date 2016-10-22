@@ -1,4 +1,4 @@
-package pl.edu.ug;
+package pl.edu.ug.rule;
 
 import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 
@@ -30,6 +30,6 @@ public class PartiallyProbRule extends Rule {
 
     @Override
     public String toString() {
-        return "Partially Probabilistic Rule";
+        return "Rule: Partially Probabilistic";
     }
 }
