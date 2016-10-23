@@ -43,24 +43,17 @@ public class Simulation {
 
         rules.stream().forEach(rule -> {
 
-            //System.out.println("\nRule: " + rule);
-
             List<byte[][]> finalImages = new ArrayList<>();
 
             int[] diffs = new int[tries];
             byte[][] avgImage = hiddenImg;
 
-
             for (int t = 0; t < tries; t++) {
 
                 List<byte[][]> iterations = new ArrayList<>();
                 iterations.add(img); // Full img
-                // System.out.println("\nInitial img: ");
-                // System.out.println(byteMatrixToString(img));
 
                 iterations.add(hiddenImg);
-                //System.out.println("\nHidden img: ");
-                //System.out.println(byteMatrixToString(hiddenImg));
 
                 for (int iter = 2; !Utils.isFullyShown(iterations.get(iter - 1)); iter++) {
 
@@ -100,12 +93,16 @@ public class Simulation {
             // Compute some statistics
             double mean = stats.getMean();
             double std = stats.getStandardDeviation();
+            int max = new Double(stats.getMax()).intValue();
+
+
             //double median = stats.getPercentile(50);
 
             //System.out.println("Mean " + mean + " " + " Std: " + std);
             //System.out.println(byteMatrixToString(hiddenImg));
 
             avgImage = Utils.avgImg(finalImages);
+
             int avgDiff = Utils.imgDiff(img, avgImage);
             //System.out.println("Avg img: " + avgDiff);
 
@@ -116,7 +113,7 @@ public class Simulation {
                 rand.ints(3, 0, tries).forEach(i -> samples.add(finalImages.get(i)));
             }
 
-            SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, avgDiff);
+            SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, avgDiff, max);
             simResults.add(simResult);
             System.out.println(simResult);
         });
