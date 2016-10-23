@@ -55,6 +55,7 @@ public class Simulation {
 
                 iterations.add(hiddenImg);
 
+                //TODO: optimization for "Deterministic" rules
                 for (int iter = 2; !Utils.isFullyShown(iterations.get(iter - 1)); iter++) {
 
                     byte[][] iterResult = new byte[rows][cols];  //uninitialized
@@ -68,16 +69,9 @@ public class Simulation {
                 }
 
                 byte[][] finalImage = iterations.get(iterations.size() - 1);
-
-
                 finalImages.add(finalImage);
 
-
-              //  System.out.println("\nPROBA: " + t);
-              //  System.out.println("Iterations: " + (iterations.size() - 2));
-
                 int diff = Utils.imgDiff(img, finalImage);
-             //   System.out.println("Diff: " + diff);
                 diffs[t] = diff;
 
                 //System.out.println(byteMatrixToString(avgImage));
@@ -95,25 +89,18 @@ public class Simulation {
             double std = stats.getStandardDeviation();
             int max = new Double(stats.getMax()).intValue();
 
-
-            //double median = stats.getPercentile(50);
-
-            //System.out.println("Mean " + mean + " " + " Std: " + std);
-            //System.out.println(byteMatrixToString(hiddenImg));
-
+            // Apply Stats Method
             avgImage = Utils.avgImg(finalImages);
+            int avgMethodDiff = Utils.imgDiff(img, avgImage);
 
-            int avgDiff = Utils.imgDiff(img, avgImage);
-            //System.out.println("Avg img: " + avgDiff);
-
-            // Gather some samples
+            // Gather some (3 - hardcoded) samples
             List<byte[][]> samples = new ArrayList<>();
 
             if (3 < tries) {
                 rand.ints(3, 0, tries).forEach(i -> samples.add(finalImages.get(i)));
             }
 
-            SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, avgDiff, max);
+            SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, max, avgMethodDiff);
             simResults.add(simResult);
             System.out.println(simResult);
         });

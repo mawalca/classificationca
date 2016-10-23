@@ -12,12 +12,12 @@ public class SimResult {
     private List<byte[][]> samples;
     private byte[][] avgImage;
 
-    private int avgDiff;
+    private int statMethodDiff;
     private double mean;
     private double std;
-    private int maxDiff;
+    private int max;
 
-    public SimResult(Rule rule, byte[][] img, byte[][] hiddenImg, List<byte[][]> samples, byte[][] avgImage, double mean, double std, int avgDiff, int maxDiff) {
+    public SimResult(Rule rule, byte[][] img, byte[][] hiddenImg, List<byte[][]> samples, byte[][] avgImage, double mean, double std, int max, int statMethodDiff) {
         this.rule = rule;
         this.img = img;
         this.hiddenImg = hiddenImg;
@@ -25,12 +25,12 @@ public class SimResult {
         this.avgImage = avgImage;
         this.mean = mean;
         this.std = std;
-        this.avgDiff = avgDiff;
-        this.maxDiff = maxDiff;
+        this.statMethodDiff = statMethodDiff;
+        this.max = max;
     }
 
-    public int getMaxDiff() {
-        return maxDiff;
+    public int getMax() {
+        return max;
     }
 
     public byte[][] getImg() {
@@ -57,8 +57,8 @@ public class SimResult {
         return std;
     }
 
-    public int getAvgDiff() {
-        return avgDiff;
+    public int getStatMethodDiff() {
+        return statMethodDiff;
     }
 
     public Rule getRule() {
@@ -74,11 +74,11 @@ public class SimResult {
         sb.append(" Std: ");
         sb.append(String.format("%.2f", std));
 
-        sb.append(" AvgDiff: ");
-        sb.append(avgDiff);
+        sb.append(" StatMethodDiff: ");
+        sb.append(statMethodDiff);
 
         sb.append(" MaxDiff: ");
-        sb.append(maxDiff);
+        sb.append(max);
 
         return sb.toString();
     }
