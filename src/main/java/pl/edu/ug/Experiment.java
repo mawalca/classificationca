@@ -36,7 +36,7 @@ public class Experiment {
             simulation.run();
             experimentResults.add(simResults);
 
-            System.out.println("Completed: " + new Double(100.0*(i + 1)/simulations).intValue() + "%");
+            System.out.println("\n************** Completed: " + new Double(100.0*(i + 1)/simulations).intValue() + "%\n");
         }
     }
 
