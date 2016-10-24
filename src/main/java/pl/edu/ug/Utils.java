@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Utils {
 
-    public static byte[][] avgImg(List<byte[][]> images){
+    public static byte[][] avgImg(List<byte[][]> images) {
         int cols = images.get(0)[0].length;
         int rows = images.get(0).length;
 
@@ -88,6 +88,21 @@ public class Utils {
         return diagonalImg;
     }
 
+    public static byte[][] buildParabolicImg(int rows, int cols) {
+        byte[][] parabolaImg = new byte[100][100];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                parabolaImg[i][j] = computeParabolic(i, j);
+            }
+        }
+        return parabolaImg;
+    }
+
+    private static byte computeParabolic(int i, int j) {
+        if (-1 * j < (-1 * Math.pow((0.2 * i - 10), 2) - 20)) return 1;
+        return 2;
+    }
+
 
     public static int imgDiff(byte[][] img1, byte[][] img2) {
         // assume the same shape
@@ -103,7 +118,7 @@ public class Utils {
         return result;
     }
 
-    public static void awtPrintSResults(List<SimResult> results){
+    public static void awtPrintSResults(List<SimResult> results) {
 
         results.stream().forEach(simResult -> {
             new AwtViewerAll(simResult);

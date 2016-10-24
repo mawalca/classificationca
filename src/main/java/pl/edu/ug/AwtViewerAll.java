@@ -43,6 +43,7 @@ public class AwtViewerAll {
 
         List<JComponent> images = new ArrayList<>();
 
+        images.add(makeImg(result.getImg()));
         images.add(makeImg(result.getHiddenImg()));
         images.add(makeImg(result.getAvgImage()));
         result.getSamples().stream().forEach(sample -> images.add(makeImg(sample)));

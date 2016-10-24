@@ -32,6 +32,10 @@ public class Experiment {
         this.percentToShow = percentToShow;
     }
 
+    public List<List<SimResult>> getExperimentResults() {
+        return experimentResults;
+    }
+
     public void start() {
 
         // One experiment - many random images, one for simulation
