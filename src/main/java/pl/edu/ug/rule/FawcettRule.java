@@ -6,6 +6,10 @@ import java.util.Map;
 
 public class FawcettRule extends Rule {
 
+    public FawcettRule(String name) {
+        this.name = name;
+    }
+
     public byte step(byte[][] img, int row, int col) {
 
         if (img[row][col] != 0) return img[row][col];
@@ -24,10 +28,5 @@ public class FawcettRule extends Rule {
 
         byte result = (byte) new EnumeratedIntegerDistribution(sinletons, probs).sample();
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Rule: Fawcett";
     }
 }

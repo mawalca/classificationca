@@ -6,6 +6,8 @@ public abstract class Rule {
 
     Random random = new Random();
 
+    protected String name = "";
+
     abstract public byte step(byte[][] img, int row, int col);
 
     // returns Map 0 -> # class 0, 1 -> #class 1, itp.
@@ -97,5 +99,10 @@ public abstract class Rule {
         result.put((byte)2, 0);
         neigh.forEach(value -> result.put(value, result.get(value) + 1));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

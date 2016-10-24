@@ -2,9 +2,13 @@ package pl.edu.ug.rule;
 
 import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 
-import java.util.*;
+import java.util.Map;
 
 public class FullProbRule extends Rule {
+
+    public FullProbRule(String name) {
+        this.name = name;
+    }
 
     public byte step(byte[][] img, int row, int col) {
 
@@ -21,7 +25,7 @@ public class FullProbRule extends Rule {
         int[] sinletons = new int[]{0, 1, 2};
         double[] probs = new double[]{p0, p1, p2};
 
-        byte result = (byte)new EnumeratedIntegerDistribution(sinletons, probs).sample();
+        byte result = (byte) new EnumeratedIntegerDistribution(sinletons, probs).sample();
 
 //        if ((p0 != 0 && p0 != 1) ||
 //                (p1 != 0 && p1 != 1) ||
@@ -34,10 +38,5 @@ public class FullProbRule extends Rule {
 //            System.out.println("result " + result);
 //        }
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Rule: Fully Probabilistic";
     }
 }

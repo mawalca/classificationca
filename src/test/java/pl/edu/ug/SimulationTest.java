@@ -7,11 +7,6 @@ import pl.edu.ug.rule.Rule;
 
 public class SimulationTest {
 
-    Rule fpRule = new FullProbRule();
-    Rule ppRule = new PartiallyProbRule();
-    byte[][] diagonalImg = Utils.buildDiagonalImg(100, 100);
-
-
     @Test
     public void simulationTest() {
 

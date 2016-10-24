@@ -6,6 +6,9 @@ import java.util.Map;
 
 public class PartiallyProbRule extends Rule {
 
+    public PartiallyProbRule(String name) {
+        this.name = name;
+    }
 
     public byte step(byte[][] img, int row, int col) {
 
@@ -13,23 +16,18 @@ public class PartiallyProbRule extends Rule {
 
         Map<Byte, Integer> countedClasses = countClasses(img, row, col);
 
-        int all = countedClasses.get((byte)1) + countedClasses.get((byte)2);
-        double p1 = countedClasses.get((byte)1) * 1.0 / all;
-        double p2 = countedClasses.get((byte)2) * 1.0 / all;
+        int all = countedClasses.get((byte) 1) + countedClasses.get((byte) 2);
+        double p1 = countedClasses.get((byte) 1) * 1.0 / all;
+        double p2 = countedClasses.get((byte) 2) * 1.0 / all;
 
 
-        if (countedClasses.get((byte)1) + countedClasses.get((byte)2) == 0) return 0;
+        if (countedClasses.get((byte) 1) + countedClasses.get((byte) 2) == 0) return 0;
 
         int[] sinletons = new int[]{1, 2};
         double[] probs = new double[]{p1, p2};
 
-        byte result = (byte)new EnumeratedIntegerDistribution(sinletons, probs).sample();
+        byte result = (byte) new EnumeratedIntegerDistribution(sinletons, probs).sample();
 
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Rule: Partially Probabilistic";
     }
 }

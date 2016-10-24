@@ -12,9 +12,10 @@ public class KNNRule extends Rule {
     private DistanceMeasure dm;
     private int k;
 
-    public KNNRule(DistanceMeasure dm, int k) {
+    public KNNRule(DistanceMeasure dm, int k, String name) {
         this.dm = dm;
         this.k = k;
+        this.name = name;
     }
 
     @Override
@@ -74,13 +75,6 @@ public class KNNRule extends Rule {
         }
 
         return count(neighClasses);
-    }
-
-    @Override
-    public String toString() {
-        String className = dm.toString().split("@")[0];
-        String[] parts = className.split("\\.");
-        return "Rule: kNN k = " + k + " Metric: " + parts[parts.length - 1];
     }
 }
 
