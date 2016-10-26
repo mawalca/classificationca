@@ -2,6 +2,7 @@ package pl.edu.ug;
 
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import pl.edu.ug.rule.*;
+import pl.edu.ug.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +25,9 @@ public class Main {
         //byte[][] diagonalImg = Utils.buildDiagonalImg(100, 100);
         byte[][] parabolicImg = Utils.buildParabolicImg(100, 100);
 
-        Experiment experiment = new Experiment(100, rules, parabolicImg, 99, 1);
+        Experiment experiment = new Experiment(10, rules, parabolicImg, 99, 1, 4);
 
         experiment.start();
-
-        experiment.printOut();
 
         //Utils.awtPrintSResults(experiment.getExperimentResults().get(0));
 

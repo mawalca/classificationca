@@ -1,6 +1,7 @@
-package pl.edu.ug;
+package pl.edu.ug.simulation;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import pl.edu.ug.util.Utils;
 import pl.edu.ug.rule.Rule;
 
 import java.util.*;
@@ -10,36 +11,33 @@ public class Simulation {
     private byte[][] img;
     private List<Rule> rules;
     private int showPercent;
-    //final AwtViewer viewer;
-
-    private List<SimResult> simResults;
 
     private int cols;
     private int rows;
 
-    Map<Rule, List<byte[][]>> results;
+    private List<List<SimResult>> experimentResults;
     int tries;
 
     private Random rand = new Random();
 
-    public Simulation(byte[][] img, List<Rule> rules, int showPercent, int tries, List<SimResult> simResults) {
+    public Simulation(byte[][] img, List<Rule> rules, int showPercent, int tries, List<List<SimResult>> experimentResults) {
         this.img = img;
         this.rules = rules;
         this.showPercent = showPercent;
-        this.results = new HashMap<>();
         this.tries = tries;
 
         // all images are the same size
         this.cols = img[0].length;
         this.rows = img.length;
 
-        //this.viewer = new AwtViewer(rows, cols);
-        this.simResults = simResults;
+        this.experimentResults = experimentResults;
     }
 
     public void run() {
         int cellsToShow = new Double(showPercent / 100.0 * cols * rows).intValue();
         byte[][] hiddenImg = Utils.hide(img, cellsToShow);
+
+        List<SimResult> simResults = new ArrayList<>();
 
         rules.stream().forEach(rule -> {
 
@@ -104,6 +102,8 @@ public class Simulation {
             simResults.add(simResult);
             System.out.println(simResult);
         });
+
+        experimentResults.add(simResults);
     }
 
 }

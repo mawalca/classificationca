@@ -1,4 +1,4 @@
-package pl.edu.ug;
+package pl.edu.ug.simulation;
 
 import pl.edu.ug.rule.Rule;
 

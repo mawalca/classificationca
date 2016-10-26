@@ -1,6 +1,9 @@
 package pl.edu.ug;
 
 import pl.edu.ug.rule.Rule;
+import pl.edu.ug.simulation.SimResult;
+import pl.edu.ug.simulation.Simulation;
+import pl.edu.ug.simulation.SimulationWorker;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -10,8 +13,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Experiment {
 
@@ -22,37 +28,40 @@ public class Experiment {
     private int triesInSimulation;
     private int percentToShow;
 
-    private List<List<SimResult>> experimentResults = new ArrayList<>();
+    private int threadPoolSize;
+    private List<List<SimResult>> experimentResults = Collections.synchronizedList(new ArrayList<>());
+    private BlockingQueue<Simulation> blockingQueue = new LinkedBlockingQueue<>();
 
-    public Experiment(int simulations, List<Rule> rules, byte[][] fullImg, int triesInSimulation, int percentToShow) {
+    public Experiment(int simulations, List<Rule> rules, byte[][] fullImg, int triesInSimulation, int percentToShow, int threadPoolSize) {
         this.simulations = simulations;
         this.rules = rules;
         this.fullImg = fullImg;
         this.triesInSimulation = triesInSimulation;
         this.percentToShow = percentToShow;
-    }
-
-    public List<List<SimResult>> getExperimentResults() {
-        return experimentResults;
+        this.threadPoolSize = threadPoolSize;
     }
 
     public void start() {
+        try {
+            // One experiment - many random images, one for simulation
+            for (int i = 0; i < simulations; i++) {
+                // One simulation - one random image for all triesInSimulation
+                Simulation simulation = new Simulation(fullImg, rules, percentToShow, triesInSimulation, experimentResults);
+                blockingQueue.put(simulation);
+            }
 
-        // One experiment - many random images, one for simulation
-        for (int i = 0; i < simulations; i++) {
+            for (int i = 0; i < threadPoolSize; i++) {
+                new SimulationWorker(blockingQueue).start();
+            }
 
-            List<SimResult> simResults = new ArrayList<>();
+            new ExperimentProgressWatcher(experimentResults, simulations).start();
 
-            // One simulation - one random image for all triesInSimulation
-            Simulation simulation = new Simulation(fullImg, rules, percentToShow, triesInSimulation, simResults);
-            simulation.run();
-            experimentResults.add(simResults);
-
-            System.out.println("\n************** Completed: " + new Double(100.0 * (i + 1) / simulations).intValue() + "%\n");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
-    public void printOut() {
+    public static void printOut(List<List<SimResult>> experimentResults) {
 
         String filename = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss'.csv'").format(new Date());
         Path path = Paths.get("./results/" + filename);
@@ -62,27 +71,30 @@ public class Experiment {
             StringBuilder sb = new StringBuilder();
             sb.append("#");
 
-            // all results have the same data, prepare header
-            experimentResults.get(0).forEach(simResult -> {
-                sb.append(",Mean").append(simResult.getRule());
-                sb.append(",Stat").append(simResult.getRule());
-                sb.append(",Max").append(simResult.getRule());
-            });
+            synchronized (experimentResults) {
 
-            writer.write(sb.toString());
-            writer.newLine();
-
-            for (int i = 0; i < experimentResults.size(); i++) {
-                StringBuilder rSb = new StringBuilder();
-                rSb.append(i + 1);
-
-                experimentResults.get(i).stream().forEach(simResult -> {
-                    rSb.append(",").append(simResult.getMean());
-                    rSb.append(",").append(simResult.getStatMethodDiff());
-                    rSb.append(",").append(simResult.getMax());
+                // all results have the same data, prepare header
+                experimentResults.get(0).forEach(simResult -> {
+                    sb.append(",Mean").append(simResult.getRule());
+                    sb.append(",Stat").append(simResult.getRule());
+                    sb.append(",Max").append(simResult.getRule());
                 });
-                writer.write(rSb.toString());
+
+                writer.write(sb.toString());
                 writer.newLine();
+
+                for (int i = 0; i < experimentResults.size(); i++) {
+                    StringBuilder rSb = new StringBuilder();
+                    rSb.append(i + 1);
+
+                    experimentResults.get(i).stream().forEach(simResult -> {
+                        rSb.append(",").append(simResult.getMean());
+                        rSb.append(",").append(simResult.getStatMethodDiff());
+                        rSb.append(",").append(simResult.getMax());
+                    });
+                    writer.write(rSb.toString());
+                    writer.newLine();
+                }
             }
             writer.close();
 
@@ -90,4 +102,6 @@ public class Experiment {
             System.err.format("IOException: %s%n", ioe);
         }
     }
+
+
 }

@@ -1,4 +1,6 @@
-package pl.edu.ug;
+package pl.edu.ug.util;
+
+import pl.edu.ug.simulation.SimResult;
 
 import javax.swing.*;
 import java.util.List;
