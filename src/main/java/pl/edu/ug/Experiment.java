@@ -3,7 +3,7 @@ package pl.edu.ug;
 import pl.edu.ug.rule.Rule;
 import pl.edu.ug.simulation.SimResult;
 import pl.edu.ug.simulation.Simulation;
-import pl.edu.ug.simulation.SimulationWorker;
+import pl.edu.ug.simulation.SimulationTask;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Experiment {
@@ -42,23 +44,25 @@ public class Experiment {
     }
 
     public void start() {
-        try {
-            // One experiment - many random images, one for simulation
-            for (int i = 0; i < simulations; i++) {
-                // One simulation - one random image for all triesInSimulation
-                Simulation simulation = new Simulation(fullImg, rules, percentToShow, triesInSimulation, experimentResults);
-                blockingQueue.put(simulation);
-            }
 
-            for (int i = 0; i < threadPoolSize; i++) {
-                new SimulationWorker(blockingQueue).start();
-            }
-
-            new ExperimentProgressWatcher(experimentResults, simulations).start();
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
+        for (int i = 0; i < simulations; i++) {
+            executor.submit(new SimulationTask(blockingQueue));
         }
+
+        // One experiment - many random images, one for simulation
+        for (int i = 0; i < simulations; i++) {
+            // One simulation - one random image for all triesInSimulation
+            Simulation simulation = new Simulation(fullImg, rules, percentToShow, triesInSimulation, experimentResults);
+            try {
+                blockingQueue.put(simulation);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ExecutorService watcherExecutor = Executors.newSingleThreadExecutor();
+        watcherExecutor.submit(new ProgressWatcherTask(experimentResults, simulations, executor));
     }
 
     public static void printOut(List<List<SimResult>> experimentResults) {

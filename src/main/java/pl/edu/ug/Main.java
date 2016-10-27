@@ -25,7 +25,7 @@ public class Main {
         //byte[][] diagonalImg = Utils.buildDiagonalImg(100, 100);
         byte[][] parabolicImg = Utils.buildParabolicImg(100, 100);
 
-        Experiment experiment = new Experiment(10, rules, parabolicImg, 99, 1, 4);
+        Experiment experiment = new Experiment(100, rules, parabolicImg, 99, 1, 4);
 
         experiment.start();
 

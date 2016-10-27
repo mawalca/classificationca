@@ -3,20 +3,26 @@ package pl.edu.ug;
 import pl.edu.ug.simulation.SimResult;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
-public class ExperimentProgressWatcher extends Thread {
+public class ProgressWatcherTask implements Runnable {
 
     private List<List<SimResult>> simResults;
     private int expected;
+    private ExecutorService executor;
 
-    public ExperimentProgressWatcher(List<List<SimResult>> simResults, int expected) {
+    public ProgressWatcherTask(List<List<SimResult>> simResults, int expected, ExecutorService executor) {
         this.simResults = simResults;
         this.expected = expected;
+        this.executor = executor;
     }
 
     @Override
     public void run() {
+
+        System.out.println("Progress Watcher Task started");
 
         boolean pending = true;
 
@@ -32,9 +38,22 @@ public class ExperimentProgressWatcher extends Thread {
             try {
                 Thread.sleep(12000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println("Progress Watcher interrupted");
             }
         }
+
+        executor.shutdownNow();
+
         Experiment.printOut(simResults);
+
+        try {
+            if (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
+                System.out.println("Still waiting...");
+                System.exit(0);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 }
