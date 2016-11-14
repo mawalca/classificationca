@@ -5,16 +5,8 @@ import pl.edu.ug.simulation.SimResult;
 import pl.edu.ug.simulation.Simulation;
 import pl.edu.ug.simulation.SimulationTask;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -31,8 +23,9 @@ public class Experiment {
     private int percentToShow;
 
     private int threadPoolSize;
-    private List<List<SimResult>> experimentResults = Collections.synchronizedList(new ArrayList<>());
-    private BlockingQueue<Simulation> blockingQueue = new LinkedBlockingQueue<>();
+    //private List<List<SimResult>> experimentResults = Collections.synchronizedList(new ArrayList<>());
+    private BlockingQueue<Simulation> simulationBlockingQueue = new LinkedBlockingQueue<>();
+    private BlockingQueue<List<SimResult>> resultBlockingQueue = new LinkedBlockingQueue<>();
 
     public Experiment(int simulations, List<Rule> rules, byte[][] fullImg, int triesInSimulation, int percentToShow, int threadPoolSize) {
         this.simulations = simulations;
@@ -47,64 +40,22 @@ public class Experiment {
 
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
         for (int i = 0; i < simulations; i++) {
-            executor.submit(new SimulationTask(blockingQueue));
+            executor.submit(new SimulationTask(simulationBlockingQueue));
         }
 
-        // One experiment - many random images, one for simulation
+        // One experiment - many random images, one per simulation
         for (int i = 0; i < simulations; i++) {
             // One simulation - one random image for all triesInSimulation
-            Simulation simulation = new Simulation(fullImg, rules, percentToShow, triesInSimulation, experimentResults);
+            Simulation simulation = new Simulation(fullImg, rules, percentToShow, triesInSimulation, resultBlockingQueue);
             try {
-                blockingQueue.put(simulation);
+                simulationBlockingQueue.put(simulation);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
         ExecutorService watcherExecutor = Executors.newSingleThreadExecutor();
-        watcherExecutor.submit(new ProgressWatcherTask(experimentResults, simulations, executor));
-    }
-
-    public static void printOut(List<List<SimResult>> experimentResults) {
-
-        String filename = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss'.csv'").format(new Date());
-        Path path = Paths.get("./results/" + filename);
-
-        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE_NEW)) {
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("#");
-
-            synchronized (experimentResults) {
-
-                // all results have the same data, prepare header
-                experimentResults.get(0).forEach(simResult -> {
-                    sb.append(",Mean").append(simResult.getRule());
-                    sb.append(",Stat").append(simResult.getRule());
-                    sb.append(",Max").append(simResult.getRule());
-                });
-
-                writer.write(sb.toString());
-                writer.newLine();
-
-                for (int i = 0; i < experimentResults.size(); i++) {
-                    StringBuilder rSb = new StringBuilder();
-                    rSb.append(i + 1);
-
-                    experimentResults.get(i).stream().forEach(simResult -> {
-                        rSb.append(",").append(simResult.getMean());
-                        rSb.append(",").append(simResult.getStatMethodDiff());
-                        rSb.append(",").append(simResult.getMax());
-                    });
-                    writer.write(rSb.toString());
-                    writer.newLine();
-                }
-            }
-            writer.close();
-
-        } catch (IOException ioe) {
-            System.err.format("IOException: %s%n", ioe);
-        }
+        watcherExecutor.submit(new PrinterAndWatcherTask(resultBlockingQueue, simulations, executor));
     }
 
 

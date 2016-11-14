@@ -16,7 +16,6 @@ public class FullProbRule extends Rule {
 
         Map<Byte, Integer> countedClasses = countClasses(img, row, col);
 
-
         int all = countedClasses.get((byte) 0) + countedClasses.get((byte) 1) + countedClasses.get((byte) 2);
         double p0 = countedClasses.get((byte) 0) * 1.0 / all;
         double p1 = countedClasses.get((byte) 1) * 1.0 / all;

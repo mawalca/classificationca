@@ -5,6 +5,7 @@ import pl.edu.ug.util.Utils;
 import pl.edu.ug.rule.Rule;
 
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 
 public class Simulation {
 
@@ -15,12 +16,12 @@ public class Simulation {
     private int cols;
     private int rows;
 
-    private List<List<SimResult>> experimentResults;
+    private BlockingQueue<List<SimResult>> resultBlockingQueue;
     int tries;
 
     private Random rand = new Random();
 
-    public Simulation(byte[][] img, List<Rule> rules, int showPercent, int tries, List<List<SimResult>> experimentResults) {
+    public Simulation(byte[][] img, List<Rule> rules, int showPercent, int tries, BlockingQueue<List<SimResult>> resultBlockingQueue) {
         this.img = img;
         this.rules = rules;
         this.showPercent = showPercent;
@@ -30,7 +31,7 @@ public class Simulation {
         this.cols = img[0].length;
         this.rows = img.length;
 
-        this.experimentResults = experimentResults;
+        this.resultBlockingQueue = resultBlockingQueue;
     }
 
     public void run() {
@@ -103,7 +104,13 @@ public class Simulation {
             System.out.println(simResult);
         });
 
-        experimentResults.add(simResults);
+        try {
+            resultBlockingQueue.put(simResults);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 }
