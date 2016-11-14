@@ -1,10 +1,12 @@
-package pl.edu.ug.simulation;
+package pl.edu.ug.caclassification.simulation;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import pl.edu.ug.util.Utils;
-import pl.edu.ug.rule.Rule;
+import pl.edu.ug.caclassification.rule.Rule;
+import pl.edu.ug.caclassification.util.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 
 public class Simulation {
@@ -73,7 +75,7 @@ public class Simulation {
                 int diff = Utils.imgDiff(img, finalImage);
                 diffs[t] = diff;
 
-                //System.out.println(byteMatrixToString(avgImage));
+                //System.out.println(Utils.byteMatrixToString(avgImage));
             }
 
             DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -101,7 +103,7 @@ public class Simulation {
 
             SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, max, avgMethodDiff);
             simResults.add(simResult);
-            System.out.println(simResult);
+            //System.out.println(simResult);
         });
 
         try {
@@ -109,7 +111,6 @@ public class Simulation {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
 
     }
 

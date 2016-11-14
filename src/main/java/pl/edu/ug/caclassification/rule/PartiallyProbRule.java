@@ -1,12 +1,12 @@
-package pl.edu.ug.rule;
+package pl.edu.ug.caclassification.rule;
 
 import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 
 import java.util.Map;
 
-public class FawcettRule extends Rule {
+public class PartiallyProbRule extends Rule {
 
-    public FawcettRule(String name) {
+    public PartiallyProbRule(String name) {
         this.name = name;
     }
 
@@ -16,17 +16,18 @@ public class FawcettRule extends Rule {
 
         Map<Byte, Integer> countedClasses = countClasses(img, row, col);
 
-        int c1 = countedClasses.get((byte) 1);
-        int c2 = countedClasses.get((byte) 2);
+        int all = countedClasses.get((byte) 1) + countedClasses.get((byte) 2);
+        double p1 = countedClasses.get((byte) 1) * 1.0 / all;
+        double p2 = countedClasses.get((byte) 2) * 1.0 / all;
 
-        if (c1 + c2 == 0) return 0;
-        if (c1 > c2) return 1;
-        if (c2 > c1) return 2;
+
+        if (countedClasses.get((byte) 1) + countedClasses.get((byte) 2) == 0) return 0;
 
         int[] sinletons = new int[]{1, 2};
-        double[] probs = new double[]{0.5, 0.5};
+        double[] probs = new double[]{p1, p2};
 
         byte result = (byte) new EnumeratedIntegerDistribution(sinletons, probs).sample();
+
         return result;
     }
 }

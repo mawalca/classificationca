@@ -1,4 +1,4 @@
-package pl.edu.ug.rule;
+package pl.edu.ug.caclassification.rule;
 
 import java.util.*;
 

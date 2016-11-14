@@ -1,12 +1,10 @@
-package pl.edu.ug;
+package pl.edu.ug.caclassification;
 
-import pl.edu.ug.rule.Rule;
-import pl.edu.ug.simulation.SimResult;
-import pl.edu.ug.simulation.Simulation;
-import pl.edu.ug.simulation.SimulationTask;
+import pl.edu.ug.caclassification.rule.Rule;
+import pl.edu.ug.caclassification.simulation.SimResult;
+import pl.edu.ug.caclassification.simulation.Simulation;
+import pl.edu.ug.caclassification.simulation.SimulationTask;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -27,6 +25,8 @@ public class Experiment {
     private BlockingQueue<Simulation> simulationBlockingQueue = new LinkedBlockingQueue<>();
     private BlockingQueue<List<SimResult>> resultBlockingQueue = new LinkedBlockingQueue<>();
 
+    ExecutorService watcherExecutor = Executors.newSingleThreadExecutor();
+
     public Experiment(int simulations, List<Rule> rules, byte[][] fullImg, int triesInSimulation, int percentToShow, int threadPoolSize) {
         this.simulations = simulations;
         this.rules = rules;
@@ -39,7 +39,7 @@ public class Experiment {
     public void start() {
 
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
-        for (int i = 0; i < simulations; i++) {
+        for (int i = 0; i < threadPoolSize; i++) {
             executor.submit(new SimulationTask(simulationBlockingQueue));
         }
 
@@ -54,9 +54,11 @@ public class Experiment {
             }
         }
 
-        ExecutorService watcherExecutor = Executors.newSingleThreadExecutor();
+        //ExecutorService watcherExecutor = Executors.newSingleThreadExecutor();
         watcherExecutor.submit(new PrinterAndWatcherTask(resultBlockingQueue, simulations, executor));
     }
 
-
+    public ExecutorService getWatcherExecutor() {
+        return watcherExecutor;
+    }
 }

@@ -1,15 +1,7 @@
-package pl.edu.ug.util;
+package pl.edu.ug.caclassification.util;
 
-import pl.edu.ug.simulation.SimResult;
+import pl.edu.ug.caclassification.simulation.SimResult;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 

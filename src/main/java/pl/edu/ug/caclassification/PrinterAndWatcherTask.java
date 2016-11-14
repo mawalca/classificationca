@@ -1,6 +1,6 @@
-package pl.edu.ug;
+package pl.edu.ug.caclassification;
 
-import pl.edu.ug.simulation.SimResult;
+import pl.edu.ug.caclassification.simulation.SimResult;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

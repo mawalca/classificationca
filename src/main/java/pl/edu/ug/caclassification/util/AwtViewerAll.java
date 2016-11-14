@@ -1,6 +1,6 @@
-package pl.edu.ug.util;
+package pl.edu.ug.caclassification.util;
 
-import pl.edu.ug.simulation.SimResult;
+import pl.edu.ug.caclassification.simulation.SimResult;
 
 import javax.swing.*;
 import java.util.List;

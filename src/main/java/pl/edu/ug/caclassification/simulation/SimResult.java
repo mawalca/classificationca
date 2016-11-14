@@ -1,6 +1,6 @@
-package pl.edu.ug.simulation;
+package pl.edu.ug.caclassification.simulation;
 
-import pl.edu.ug.rule.Rule;
+import pl.edu.ug.caclassification.rule.Rule;
 
 import java.util.List;
 
