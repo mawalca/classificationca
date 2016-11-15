@@ -23,10 +23,10 @@ public class Main {
         rules.add(fawcettRule);
         //rules.add(knn5Rule);
 
-        //byte[][] diagonalImg = Utils.buildDiagonalImg(100, 100);
-        byte[][] parabolicImg = Utils.buildParabolicImg(100, 100);
+        byte[][] diagonalImg = Utils.buildDiagonalImg(300, 300);
+        //byte[][] parabolicImg = Utils.buildParabolicImg(100, 100);
 
-        Experiment experiment = new Experiment(100, rules, parabolicImg, 99, 1, 6);
+        Experiment experiment = new Experiment(100, rules, diagonalImg, 99, 1, 6);
 
         experiment.start();
         //Utils.awtPrintSResults(experiment.getExperimentResults().get(0));

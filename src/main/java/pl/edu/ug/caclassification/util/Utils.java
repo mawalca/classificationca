@@ -80,7 +80,7 @@ public class Utils {
     }
 
     public static byte[][] buildDiagonalImg(int rows, int cols) {
-        byte[][] diagonalImg = new byte[100][100];
+        byte[][] diagonalImg = new byte[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (i < j) diagonalImg[i][j] = 1;
@@ -91,7 +91,7 @@ public class Utils {
     }
 
     public static byte[][] buildParabolicImg(int rows, int cols) {
-        byte[][] parabolaImg = new byte[100][100];
+        byte[][] parabolaImg = new byte[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 parabolaImg[i][j] = computeParabolic(i, j);
@@ -101,7 +101,11 @@ public class Utils {
     }
 
     private static byte computeParabolic(int i, int j) {
-        if (-1 * j < (-1 * Math.pow((0.2 * i - 10), 2) - 20)) return 1;
+
+            if (-1 * j < (-1 * Math.pow((0.2 * i - 10), 2) - 20)) return 1;
+
+        //  if (-1 * j < (-1 * Math.pow((0.1 * i - 15), 2) - 80)) return 1;
+       // -(0.1*x - 15)^2 - 80
         return 2;
     }
 
