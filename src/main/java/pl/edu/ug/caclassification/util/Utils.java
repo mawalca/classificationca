@@ -2,6 +2,7 @@ package pl.edu.ug.caclassification.util;
 
 import pl.edu.ug.caclassification.simulation.SimResult;
 
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Random;
 
@@ -89,23 +90,46 @@ public class Utils {
         }
         return diagonalImg;
     }
+//
+//    public static byte[][] buildParabolicImg(int rows, int cols) {
+//        byte[][] parabolaImg = new byte[rows][cols];
+//        for (int i = 0; i < rows; i++) {
+//            for (int j = 0; j < cols; j++) {
+//                parabolaImg[i][j] = computeParabolic(i, j);
+//            }
+//        }
+//        return parabolaImg;
+//    }
 
-    public static byte[][] buildParabolicImg(int rows, int cols) {
-        byte[][] parabolaImg = new byte[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                parabolaImg[i][j] = computeParabolic(i, j);
+    public static byte[][] buildParabolicImg(int size) {
+
+        byte[][] parabolaImg = new byte[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                parabolaImg[i][j] = computeParabolic(i, j, size);
             }
         }
         return parabolaImg;
     }
 
-    private static byte computeParabolic(int i, int j) {
+//    private static byte computeParabolic(int i, int j) {
+//
+//        if (-1 * j < (-1 * Math.pow((0.2 * i - 10), 2) - 20)) return 1;
+//
+//        //  if (-1 * j < (-1 * Math.pow((0.1 * i - 15), 2) - 80)) return 1;
+//        // -(0.1*x - 15)^2 - 80
+//        return 2;
+//    }
 
-            if (-1 * j < (-1 * Math.pow((0.2 * i - 10), 2) - 20)) return 1;
+    private static byte computeParabolic(int x, int y, int size) {
 
-        //  if (-1 * j < (-1 * Math.pow((0.1 * i - 15), 2) - 80)) return 1;
-       // -(0.1*x - 15)^2 - 80
+        int k = new Double(0.2 * size).intValue();
+        int h = size / 2;
+
+        double m = Math.pow(size - h, 2);
+        double p = (size - k) / m;
+
+        if ((y - k) < p * Math.pow(x - h, 2)) return 1;
         return 2;
     }
 

@@ -5,6 +5,7 @@ import pl.edu.ug.caclassification.rule.FullProbRule;
 import pl.edu.ug.caclassification.rule.Rule;
 import pl.edu.ug.caclassification.util.Utils;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,12 +24,15 @@ public class Main {
         rules.add(fawcettRule);
         //rules.add(knn5Rule);
 
-        byte[][] diagonalImg = Utils.buildDiagonalImg(300, 300);
+        //byte[][] diagonalImg = Utils.buildDiagonalImg(300, 300);
         //byte[][] parabolicImg = Utils.buildParabolicImg(100, 100);
+        byte[][] parabolicImg = Utils.buildParabolicImg(100);
 
-        Experiment experiment = new Experiment(100, rules, diagonalImg, 99, 1, 6);
+        System.out.printf(Utils.byteMatrixToString(parabolicImg));
 
-        experiment.start();
-        //Utils.awtPrintSResults(experiment.getExperimentResults().get(0));
+       Experiment experiment = new Experiment(100, rules, parabolicImg, 99, 1, 25);
+
+       experiment.start();
+       //Utils.awtPrintSResults(experiment.getExperimentResults().get(0));
     }
 }
