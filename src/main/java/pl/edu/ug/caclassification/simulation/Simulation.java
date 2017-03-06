@@ -101,7 +101,8 @@ public class Simulation {
                 rand.ints(3, 0, tries).forEach(i -> samples.add(finalImages.get(i)));
             }
 
-            SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, max, avgMethodDiff);
+            //SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, max, avgMethodDiff);
+            SimResult simResult = new SimResult(rule, null, null, null, null, mean, std, max, avgMethodDiff);
             simResults.add(simResult);
             //System.out.println(simResult);
         });
