@@ -25,14 +25,15 @@ public class Main {
         //rules.add(knn5Rule);
 
         //byte[][] diagonalImg = Utils.buildDiagonalImg(300, 300);
+        byte[][] diagonalImg = Utils.buildDiagonalImg(100, 100);
         //byte[][] parabolicImg = Utils.buildParabolicImg(100, 100);
-        byte[][] parabolicImg = Utils.buildParabolicImg(100);
+        //byte[][] parabolicImg = Utils.buildParabolicImg(100);
 
-        System.out.printf(Utils.byteMatrixToString(parabolicImg));
+           // System.out.printf(Utils.byteMatrixToString(parabolicImg));
 
-       Experiment experiment = new Experiment(100, rules, parabolicImg, 99, 1, 25);
+      Experiment experiment = new Experiment(5, rules, diagonalImg, 99 , 1, 4);
 
-       experiment.start();
+      experiment.start();
        //Utils.awtPrintSResults(experiment.getExperimentResults().get(0));
     }
 }

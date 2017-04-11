@@ -1,8 +1,10 @@
 package pl.edu.ug.caclassification;
 
 import pl.edu.ug.caclassification.simulation.SimResult;
+import pl.edu.ug.caclassification.util.Utils;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,12 +38,16 @@ public class PrinterAndWatcherTask implements Runnable {
 
         System.out.println("Printer and Watcher Task started");
 
-        //Prepare Results file
-        String filename = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss'.csv'").format(new Date());
-        Path path = Paths.get("./results/" + filename);
+        //Prepare Results directory
+        String dateName = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss").format(new Date());
+        new File("./results/" + dateName).mkdir();
+
+        Path resultPath = Paths.get("./results/" + dateName + "/" + dateName + ".csv");
+
 
         try {
-            writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE);
+
+            writer = Files.newBufferedWriter(resultPath, StandardOpenOption.CREATE);
 
             while (actual < expected) {
 
@@ -76,10 +82,40 @@ public class PrinterAndWatcherTask implements Runnable {
                 // Not optimal but we want to have something on disk
                 writer.flush();
 
+
+                File dir = new File("./results/" + dateName + "/" + actual);
+                dir.mkdir();
+
+                for (int i = 0; i < simResults.size(); i++) {
+
+                    SimResult simResult = simResults.get(i);
+                    String ruleName = simResult.getRule().toString();
+
+                    // img, hiddenImg, samples, avgImage,
+                    Path img = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_orgImg.csv");
+                    Path hiddenImg = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_hiddenImg.csv");
+                    Path avgImg = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_avgImg.csv");
+
+                    // No of samples - 3 (hardcoded)
+                    Path sample1Img = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_sample1Img.csv");
+                    Path sample2Img = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_sample2Img.csv");
+                    Path sample3Img = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_sample3Img.csv");
+
+
+                    saveImg(img, simResult.getImg());
+                    saveImg(hiddenImg, simResult.getHiddenImg());
+                    saveImg(avgImg, simResult.getAvgImage());
+                    saveImg(sample1Img, simResult.getSamples().get(0));
+                    saveImg(sample2Img, simResult.getSamples().get(1));
+                    saveImg(sample3Img, simResult.getSamples().get(2));
+
+                }
+
                 System.out.println("\n******* Completed: " + new Double(100.0 * actual / expected).intValue() + "%\n");
             }
 
             writer.close();
+
 
         } catch (IOException e) {
             System.err.format("IOException: %s%n", e);
@@ -97,5 +133,28 @@ public class PrinterAndWatcherTask implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void saveImg(Path path, byte[][] img) {
+
+        try {
+            BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE);
+
+            for (byte[] line : img) {
+                StringBuilder textLine = new StringBuilder();
+                for (int i = 0; i < line.length; i++) {
+                    textLine.append(line[i]);
+                    if (i < line.length - 1) {
+                        textLine.append(",");
+                    }
+                }
+                writer.write(textLine.toString());
+                writer.newLine();
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

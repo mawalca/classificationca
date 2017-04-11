@@ -102,7 +102,7 @@ public class Simulation {
             }
 
             //SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, max, avgMethodDiff);
-            SimResult simResult = new SimResult(rule, null, null, null, null, mean, std, max, avgMethodDiff);
+            SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, max, avgMethodDiff);
             simResults.add(simResult);
             //System.out.println(simResult);
         });
