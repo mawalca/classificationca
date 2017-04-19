@@ -2,9 +2,13 @@ package pl.edu.ug.caclassification.util;
 
 import pl.edu.ug.caclassification.simulation.SimResult;
 
-import java.util.DoubleSummaryStatistics;
-import java.util.List;
-import java.util.Random;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Utils {
 
@@ -90,6 +94,7 @@ public class Utils {
         }
         return diagonalImg;
     }
+
 //
 //    public static byte[][] buildParabolicImg(int rows, int cols) {
 //        byte[][] parabolaImg = new byte[rows][cols];
@@ -100,6 +105,28 @@ public class Utils {
 //        }
 //        return parabolaImg;
 //    }
+
+    public static byte[][] buildImageFromFile(Path path, List<Coordinates> coordinates) {
+
+        List<byte[]> lines = new LinkedList<>();
+        try {
+            BufferedReader reader = Files.newBufferedReader(path);
+            reader.lines().forEach(line -> {
+                String[] strNumbers = line.split(",");
+                byte[] numbers = new byte[strNumbers.length];
+                for (int i = 0; i < numbers.length; i++) {
+                    numbers[i] = new Byte(strNumbers[i]);
+                }
+                lines.add(numbers);
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[][] result = new byte[lines.size()][];
+        lines.toArray(result);
+        return result;
+    }
 
     public static byte[][] buildParabolicImg(int size) {
 

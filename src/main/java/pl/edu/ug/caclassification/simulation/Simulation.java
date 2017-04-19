@@ -12,6 +12,7 @@ import java.util.concurrent.BlockingQueue;
 public class Simulation {
 
     private byte[][] img;
+    private byte[][] startImg;
     private List<Rule> rules;
     private int showPercent;
 
@@ -36,9 +37,28 @@ public class Simulation {
         this.resultBlockingQueue = resultBlockingQueue;
     }
 
+    public Simulation(byte[][] img, byte[][] startImg, List<Rule> rules, int tries, BlockingQueue<List<SimResult>> resultBlockingQueue) {
+        this.img = img;
+        this.startImg = startImg;
+        this.rules = rules;
+        this.tries = tries;
+
+        // all images are the same size
+        this.cols = img[0].length;
+        this.rows = img.length;
+
+        this.resultBlockingQueue = resultBlockingQueue;
+    }
+
     public void run() {
-        int cellsToShow = new Double(showPercent / 100.0 * cols * rows).intValue();
-        byte[][] hiddenImg = Utils.hide(img, cellsToShow);
+
+        byte[][] hiddenImg;
+        if (startImg == null) {
+            int cellsToShow = new Double(showPercent / 100.0 * cols * rows).intValue();
+            hiddenImg = Utils.hide(img, cellsToShow);
+        } else {
+            hiddenImg = startImg;
+        }
 
         List<SimResult> simResults = new ArrayList<>();
 

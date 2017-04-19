@@ -65,6 +65,7 @@ public class PrinterAndWatcherTask implements Runnable {
                     });
                     writer.write(header.toString());
                     writer.newLine();
+                    System.out.println(header.toString());
 
                 }
                 actual++;
@@ -81,6 +82,8 @@ public class PrinterAndWatcherTask implements Runnable {
 
                 // Not optimal but we want to have something on disk
                 writer.flush();
+
+                System.out.println(rSb.toString());
 
 
                 File dir = new File("./results/" + dateName + "/" + actual);

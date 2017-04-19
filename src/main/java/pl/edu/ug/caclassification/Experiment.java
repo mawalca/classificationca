@@ -17,6 +17,7 @@ public class Experiment {
 
     private List<Rule> rules;
     private byte[][] fullImg;
+    private byte[][] startImg;
     private int triesInSimulation;
     private int percentToShow;
 
@@ -36,6 +37,16 @@ public class Experiment {
         this.threadPoolSize = threadPoolSize;
     }
 
+    public Experiment(byte[][] fullImg, byte[][] startImg, List<Rule> rules,  int triesInSimulation) {
+        this.simulations = 1;
+        this.rules = rules;
+        this.fullImg = fullImg;
+        this.startImg = startImg;
+        this.triesInSimulation = triesInSimulation;
+        this.threadPoolSize = 1;
+
+    }
+
     public void start() {
 
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
@@ -45,8 +56,15 @@ public class Experiment {
 
         // One experiment - many random images, one per simulation
         for (int i = 0; i < simulations; i++) {
+
+
             // One simulation - one random image for all triesInSimulation
-            Simulation simulation = new Simulation(fullImg, rules, percentToShow, triesInSimulation, resultBlockingQueue);
+            Simulation simulation;
+            if (startImg == null) {
+                simulation = new Simulation(fullImg, rules, percentToShow, triesInSimulation, resultBlockingQueue);
+            } else {
+                simulation = new Simulation(fullImg, startImg, rules, triesInSimulation, resultBlockingQueue);
+            }
             try {
                 simulationBlockingQueue.put(simulation);
             } catch (InterruptedException e) {

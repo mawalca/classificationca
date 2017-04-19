@@ -5,7 +5,8 @@ import pl.edu.ug.caclassification.rule.FullProbRule;
 import pl.edu.ug.caclassification.rule.Rule;
 import pl.edu.ug.caclassification.util.Utils;
 
-import java.awt.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +26,19 @@ public class Main {
         //rules.add(knn5Rule);
 
         //byte[][] diagonalImg = Utils.buildDiagonalImg(300, 300);
-        byte[][] diagonalImg = Utils.buildDiagonalImg(100, 100);
+        byte[][] diagonalImg = Utils.buildDiagonalImg(50, 50);
         //byte[][] parabolicImg = Utils.buildParabolicImg(100, 100);
         //byte[][] parabolicImg = Utils.buildParabolicImg(100);
 
-           // System.out.printf(Utils.byteMatrixToString(parabolicImg));
+        Path path = Paths.get("./images/PFvsFawcetImgsDiagonal50x50_03/4/Faw_hiddenImg.csv");
+        byte[][] startImg = Utils.buildImageFromFile(path, null);
 
-      Experiment experiment = new Experiment(5, rules, diagonalImg, 99 , 1, 4);
+        System.out.printf(Utils.byteMatrixToString(startImg));
 
-      experiment.start();
+//      Experiment experiment = new Experiment(5, rules, diagonalImg, 99 , 1, 4);
+        Experiment experiment = new Experiment(diagonalImg, startImg, rules, 99 * 3);
+
+       experiment.start();
        //Utils.awtPrintSResults(experiment.getExperimentResults().get(0));
     }
 }
