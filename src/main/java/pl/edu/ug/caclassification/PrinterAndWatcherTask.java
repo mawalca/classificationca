@@ -99,18 +99,23 @@ public class PrinterAndWatcherTask implements Runnable {
                     Path hiddenImg = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_hiddenImg.csv");
                     Path avgImg = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_avgImg.csv");
 
+                    saveImg(img, simResult.getImg());
+                    saveImg(hiddenImg, simResult.getHiddenImg());
+                    saveImg(avgImg, simResult.getAvgImage());
+
                     // No of samples - 3 (hardcoded)
                     Path sample1Img = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_sample1Img.csv");
                     Path sample2Img = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_sample2Img.csv");
                     Path sample3Img = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_sample3Img.csv");
 
-
-                    saveImg(img, simResult.getImg());
-                    saveImg(hiddenImg, simResult.getHiddenImg());
-                    saveImg(avgImg, simResult.getAvgImage());
                     saveImg(sample1Img, simResult.getSamples().get(0));
                     saveImg(sample2Img, simResult.getSamples().get(1));
                     saveImg(sample3Img, simResult.getSamples().get(2));
+
+                    for (int j = 0; j < simResult.getMidIterSamples().size(); j++) {
+                        Path midIteration = Paths.get(dir.getAbsolutePath() + "/" + ruleName + "_midIter" + j + "Img.csv");
+                        saveImg(midIteration, simResult.getMidIterSamples().get(j));
+                    }
 
                 }
 

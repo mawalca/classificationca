@@ -10,6 +10,7 @@ public class SimResult {
     private byte[][] img;
     private byte[][] hiddenImg;
     private List<byte[][]> samples;
+    private List<byte[][]> midIterSamples;
     private byte[][] avgImage;
 
     private int statMethodDiff;
@@ -17,7 +18,7 @@ public class SimResult {
     private double std;
     private int max;
 
-    public SimResult(Rule rule, byte[][] img, byte[][] hiddenImg, List<byte[][]> samples, byte[][] avgImage, double mean, double std, int max, int statMethodDiff) {
+    public SimResult(Rule rule, byte[][] img, byte[][] hiddenImg, List<byte[][]> samples, List<byte[][]> midIterSamples, byte[][] avgImage, double mean, double std, int max, int statMethodDiff) {
         this.rule = rule;
         this.img = img;
         this.hiddenImg = hiddenImg;
@@ -27,6 +28,11 @@ public class SimResult {
         this.std = std;
         this.statMethodDiff = statMethodDiff;
         this.max = max;
+        this.midIterSamples = midIterSamples;
+    }
+
+    public List<byte[][]> getMidIterSamples() {
+        return midIterSamples;
     }
 
     public int getMax() {

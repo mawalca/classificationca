@@ -69,6 +69,9 @@ public class Simulation {
             int[] diffs = new int[tries];
             byte[][] avgImage = hiddenImg;
 
+            // Gather some (2 - hardcoded) mid iteration samples
+            List<byte[][]> midIterSamples = new ArrayList<>();
+
             for (int t = 0; t < tries; t++) {
 
                 List<byte[][]> iterations = new ArrayList<>();
@@ -86,7 +89,13 @@ public class Simulation {
                             iterResult[i][j] = rule.step(iterations.get(iter - 1), i, j);
                         }
                     }
+
                     iterations.add(iterResult);
+
+                    if (t == 0 && (iter == 5 || iter == 7)) {
+                        midIterSamples.add(iterResult);
+                    }
+
                 }
 
                 byte[][] finalImage = iterations.get(iterations.size() - 1);
@@ -95,7 +104,7 @@ public class Simulation {
                 int diff = Utils.imgDiff(img, finalImage);
                 diffs[t] = diff;
 
-                //System.out.println(Utils.byteMatrixToString(avgImage));
+                //System.out.println(Utils.byteMatrixToString(finalImage));
             }
 
             DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -122,9 +131,9 @@ public class Simulation {
             }
 
             //SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, max, avgMethodDiff);
-            SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, max, avgMethodDiff);
+            SimResult simResult = new SimResult(rule, img, hiddenImg, samples, midIterSamples, avgImage, mean, std, max, avgMethodDiff);
             simResults.add(simResult);
-            //System.out.println(simResult);
+            System.out.println(simResult);
         });
 
         try {

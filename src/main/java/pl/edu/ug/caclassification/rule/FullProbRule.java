@@ -26,6 +26,7 @@ public class FullProbRule extends Rule {
 
         byte result = (byte) new EnumeratedIntegerDistribution(sinletons, probs).sample();
 
+
 //        if ((p0 != 0 && p0 != 1) ||
 //                (p1 != 0 && p1 != 1) ||
 //                (p2 != 0 && p2 != 1)) {

@@ -25,20 +25,20 @@ public class Main {
         rules.add(fawcettRule);
         //rules.add(knn5Rule);
 
-        //byte[][] diagonalImg = Utils.buildDiagonalImg(300, 300);
-        byte[][] diagonalImg = Utils.buildDiagonalImg(50, 50);
+        byte[][] diagonalImg = Utils.buildDiagonalImg(100, 100);
+        //byte[][] diagonalImg = Utils.buildDiagonalImg(50, 50);
         //byte[][] parabolicImg = Utils.buildParabolicImg(100, 100);
-        //byte[][] parabolicImg = Utils.buildParabolicImg(100);
+        byte[][] parabolicImg = Utils.buildParabolicImg(100);
 
-        Path path = Paths.get("./images/PFvsFawcetImgsDiagonal50x50_03/4/Faw_hiddenImg.csv");
-        byte[][] startImg = Utils.buildImageFromFile(path, null);
+        //Path path = Paths.get("./images/PFvsFawcetImgsDiagonal50x50_03/4/Faw_hiddenImg.csv");
+        //byte[][] startImg = Utils.buildImageFromFile(path, null);
 
-        System.out.printf(Utils.byteMatrixToString(startImg));
+        //System.out.printf(Utils.byteMatrixToString(diagonalImg));
 
-//      Experiment experiment = new Experiment(5, rules, diagonalImg, 99 , 1, 4);
-        Experiment experiment = new Experiment(diagonalImg, startImg, rules, 99 * 3);
+        Experiment experiment = new Experiment(1, rules, parabolicImg, 99, 1, 3);
+//        Experiment experiment = new Experiment(diagonalImg, startImg, rules, 99);
 
-       experiment.start();
-       //Utils.awtPrintSResults(experiment.getExperimentResults().get(0));
+        experiment.start();
+        //Utils.awtPrintSResults(experiment.getExperimentResults().get(0));
     }
 }
