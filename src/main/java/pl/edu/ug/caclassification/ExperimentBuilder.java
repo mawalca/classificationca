@@ -1,6 +1,6 @@
 package pl.edu.ug.caclassification;
 
-import pl.edu.ug.caclassification.rule.Rule;
+import pl.edu.ug.caclassification.simulation.SimRule;
 
 public class ExperimentBuilder {
 
@@ -29,12 +29,6 @@ public class ExperimentBuilder {
 		return this;
 	}
 	
-	public ExperimentBuilder setTriesInSimulation(int triesInSimulation)
-	{
-		experiment.setTriesInSimulation(triesInSimulation);
-		return this;
-	}
-	
 	public ExperimentBuilder setPercentToShow(int percentToShow)
 	{
 		experiment.setPercentToShow(percentToShow);
@@ -46,7 +40,7 @@ public class ExperimentBuilder {
 		return this;
 	}
 	
-	public ExperimentBuilder addRule(Rule rule) {
+	public ExperimentBuilder addRule(SimRule rule) {
 		experiment.addRule(rule);
 		return this;
 	}

@@ -1,14 +1,18 @@
-package pl.edu.ug.caclassification.rule;
+package pl.edu.ug.caclassification.rule.ruleBCA;
 
 import org.apache.commons.math3.ml.distance.DistanceMeasure;
+
+import pl.edu.ug.caclassification.util.Colors;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class KNNRule extends RuleBCA {
 
+	private Random random = new Random();
     private DistanceMeasure dm;
     private int k;
 
@@ -21,26 +25,26 @@ public class KNNRule extends RuleBCA {
     @Override
     public float step(float[][] img, int row, int col) {
 
-        if (img[row][col] != 0) return img[row][col];
+        if (img[row][col] != Colors.unknown) return img[row][col];
 
         Map<Float, Integer> countedClasses = countClasses(img, row, col);
 
-        int num1s = 0;
-        int num2s = 0;
+        int numWhites = 0;
+        int numBlacks = 0;
 
-        if (countedClasses.get((float)1) != null) {
-            num1s = countedClasses.get((float)1);
+        if (countedClasses.get(Colors.white) != null) {
+        	numWhites = countedClasses.get(Colors.white);
         }
 
-        if (countedClasses.get((float)2) != null) {
-            num2s = countedClasses.get((float)2);
+        if (countedClasses.get(Colors.black) != null) {
+            numBlacks = countedClasses.get(Colors.black);
         }
 
-        if (num1s > num2s) return 1;
-        if (num2s > num1s) return 2;
+        if (numWhites > numBlacks) return Colors.white;
+        if (numBlacks > numWhites) return Colors.black;
 
-        if (random.nextInt(2) < 1) return 1;
-        return 2;
+        if (random.nextInt(2) < 1) return Colors.white;
+        return Colors.black;
     }
 
     @Override
@@ -55,7 +59,7 @@ public class KNNRule extends RuleBCA {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 // current is always class 0 (if !=0 we return immediately, see above)
-                if (img[i][j] != 0) {
+                if (img[i][j] != Colors.unknown) {
                     double[] current = new double[]{row, col};
                     double[] neighbour = new double[]{i, j};
                     allNeighbours.add(new Neighbour(i, j, dm.compute(current, neighbour)));

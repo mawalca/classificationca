@@ -1,20 +1,15 @@
-package pl.edu.ug.caclassification.rule;
+package pl.edu.ug.caclassification.rule.ruleBCA;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pl.edu.ug.caclassification.rule.Rule;
 import pl.edu.ug.caclassification.util.*;
 
 public abstract class RuleBCA extends Rule {
 
-	private ValuesOfColors colors = new ValuesOfColorsBCA();
-	
-	public ValuesOfColors getColors() {
-		return colors;
-	}
-	
 	// neighbours without cell itself
 	public List<Float> getNeighbours(float[][] img, int row, int col) {
     	int cols = img[0].length;
@@ -102,9 +97,9 @@ public abstract class RuleBCA extends Rule {
 
     protected static Map<Float, Integer> count(List<Float> neigh){
         Map<Float, Integer> result = new HashMap<>();
-        result.put((float)0, 0);
-        result.put((float)1, 0);
-        result.put((float)2, 0);
+        result.put(Colors.white, 0);
+        result.put(Colors.black, 0);
+        result.put(Colors.unknown, 0);
         neigh.forEach(value -> result.put(value, result.get(value) + 1));
         return result;
     }

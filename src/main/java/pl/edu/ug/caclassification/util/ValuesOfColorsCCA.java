@@ -1,6 +1,6 @@
 package pl.edu.ug.caclassification.util;
 
-public class ValuesOfColorsCCA extends ValuesOfColors {
+public class ValuesOfColorsCCA {
 	float getWhite() {
 		return 0;
 	}

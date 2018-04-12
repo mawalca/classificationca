@@ -1,6 +1,8 @@
-package pl.edu.ug.caclassification.rule;
+package pl.edu.ug.caclassification.rule.ruleBCA;
 
 import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
+
+import pl.edu.ug.caclassification.util.Colors;
 
 import java.util.Map;
 
@@ -16,14 +18,14 @@ public class PartiallyProbRule extends RuleBCA {
 
         Map<Float, Integer> countedClasses = countClasses(img, row, col);
 
-        int all = countedClasses.get((float) 1) + countedClasses.get((float) 2);
-        double p1 = countedClasses.get((float) 1) * 1.0 / all;
-        double p2 = countedClasses.get((float) 2) * 1.0 / all;
+        int all = countedClasses.get(Colors.white) + countedClasses.get(Colors.black);
+        double p1 = countedClasses.get(Colors.white) * 1.0 / all;
+        double p2 = countedClasses.get(Colors.black) * 1.0 / all;
 
 
-        if (countedClasses.get((float) 1) + countedClasses.get((float) 2) == 0) return 0;
+        if (countedClasses.get(Colors.white) + countedClasses.get(Colors.black) == 0) return 0;
 
-        int[] sinletons = new int[]{1, 2};
+        int[] sinletons = new int[]{(int) Colors.white, (int) Colors.black};
         double[] probs = new double[]{p1, p2};
 
         float result = (float) new EnumeratedIntegerDistribution(sinletons, probs).sample();

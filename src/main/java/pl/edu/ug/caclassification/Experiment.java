@@ -1,8 +1,7 @@
 package pl.edu.ug.caclassification;
 
-import pl.edu.ug.caclassification.rule.Rule;
 import pl.edu.ug.caclassification.simulation.*;
-import pl.edu.ug.caclassification.simulation.finalcondition.*;
+import pl.edu.ug.caclassification.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +13,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Experiment {
 
     private int simulations;
-    private List<Rule> rules;
+    private List<SimRule> rules;
     private float[][] fullImg;
     private float[][] startImg;
-    private int triesInSimulation;
     private int percentToShow;
 
     private int threadPoolSize;
@@ -31,7 +29,6 @@ public class Experiment {
     {
     	simulations = 1;
     	rules = new ArrayList<>();
-    	triesInSimulation = 4;
     	threadPoolSize = 1;
     }
     
@@ -44,7 +41,7 @@ public class Experiment {
 		this.simulations = simulations;
 	}
 
-	public void addRule(Rule rule) {
+	public void addRule(SimRule rule) {
 		this.rules.add(rule);
 	}
 
@@ -54,10 +51,6 @@ public class Experiment {
 
 	public void setStartImg(float[][] startImg) {
 		this.startImg = startImg;
-	}
-
-	public void setTriesInSimulation(int triesInSimulation) {
-		this.triesInSimulation = triesInSimulation;
 	}
 
 	public void setPercentToShow(int percentToShow) {
@@ -75,7 +68,7 @@ public class Experiment {
 	
 	public boolean isCorrect()
 	{
-		return fullImg != null && !rules.isEmpty() && triesInSimulation > 3
+		return fullImg != null && !rules.isEmpty() 
 				&& (startImg != null || percentToShow != 0);
 	}
 	
@@ -93,11 +86,12 @@ public class Experiment {
             // One simulation - one random image for all triesInSimulation
             Simulation simulation;
             if (startImg == null) {
-                simulation = new Simulation(fullImg, rules, percentToShow, triesInSimulation, resultBlockingQueue);
+            	int cellsToShow = new Double(percentToShow / 100.0 * fullImg[0].length * fullImg.length).intValue();
+            	float[][] img = Utils.hide(fullImg, cellsToShow);
+                simulation = new Simulation(fullImg, img, rules, resultBlockingQueue);
             } else {
-                simulation = new Simulation(fullImg, startImg, rules, triesInSimulation, resultBlockingQueue);
+                simulation = new Simulation(fullImg, startImg, rules, resultBlockingQueue);
             }
-            simulation.SetCondition(new NrIterationsCondition(100));
             
             try {
                 simulationBlockingQueue.put(simulation);

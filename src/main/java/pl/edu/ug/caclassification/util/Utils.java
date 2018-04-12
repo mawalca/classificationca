@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Utils {
 
-    public static float[][] avgImg(List<float[][]> images, ValuesOfColors colors) {
+    public static float[][] avgImg(List<float[][]> images) {
         int cols = images.get(0)[0].length;
         int rows = images.get(0).length;
 
@@ -24,18 +24,18 @@ public class Utils {
 
                 for (int k = 0; k < images.size(); k++) {
                     float value = images.get(k)[i][j];
-                    if (value == colors.getWhite()) whites++;
-                    else if (value == colors.getBlack()) blacks++;
+                    if (value == Colors.white) whites++;
+                    else if (value == Colors.black) blacks++;
                 }
 
-                if (blacks > whites) result[i][j] = colors.getBlack();
-                else result[i][j] = colors.getWhite();
+                if (blacks > whites) result[i][j] = Colors.black;
+                else result[i][j] = Colors.white;
             }
         }
         return result;
     }
 
-    public static float[][] hide(float[][] img, ValuesOfColors colors, int cellsToShow) {
+    public static float[][] hide(float[][] img, int cellsToShow) {
         int cols = img[0].length;
         int rows = img.length;
 
@@ -46,7 +46,7 @@ public class Utils {
         //hide all
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
-                result[i][j] = colors.getUnknown();
+                result[i][j] = Colors.unknown;
 
         //show only cellsToShow number of cells
         random.ints(cellsToShow, 0, rows * cols).forEach(cellNumber -> {
@@ -57,35 +57,14 @@ public class Utils {
         return result;
     }
     
-    public static float[][] imageColorToCCA(float[][] img) {
-    	ValuesOfColors colorsOld = new ValuesOfColorsBCA();
-    	ValuesOfColors colorsNew = new ValuesOfColorsCCA();
-    	
-        int cols = img[0].length;
-        int rows = img.length;
-
-        float[][] result = new float[rows][cols];
-
-        for (int i = 0; i < rows; i++)
-            for (int j = 0; j < cols; j++) {
-                if (img[i][j] == colorsOld.getBlack())
-                	result[i][j] = colorsNew.getBlack();
-                else if (img[i][j] == colorsOld.getWhite())
-                	result[i][j] = colorsNew.getWhite();
-                else
-                	result[i][j] = colorsNew.getUnknown();
-            }
-        return result;
-    }
-
-    public static boolean isFullyShown(float[][] img, ValuesOfColors colors) {
+    public static boolean isFullyShown(float[][] img) {
         int cols = img[0].length;
         int rows = img.length;
         boolean result = true;
 
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
-                if (img[i][j] == colors.getUnknown()) return false;
+                if (img[i][j] == Colors.unknown) return false;
 
         return result;
     }
@@ -94,9 +73,9 @@ public class Utils {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[0].length; j++) {
-                if (array[i][j] == 0) sb.append("-");
-                else if (array[i][j] == 1) sb.append("B");
-                else if (array[i][j] == 2) sb.append("C");
+                if (array[i][j] == Colors.unknown) sb.append("-");
+                else if (array[i][j] == Colors.white) sb.append("B");
+                else if (array[i][j] == Colors.black) sb.append("C");
             }
             sb.append("\n");
         }
@@ -107,8 +86,8 @@ public class Utils {
         float[][] diagonalImg = new float[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (i < j) diagonalImg[i][j] = 1;
-                else diagonalImg[i][j] = 2;
+                if (i < j) diagonalImg[i][j] = Colors.white;
+                else diagonalImg[i][j] = Colors.black;
             }
         }
         return diagonalImg;
@@ -175,8 +154,8 @@ public class Utils {
         double m = Math.pow(size - h, 2);
         double p = (size - k) / m;
 
-        if ((y - k) < p * Math.pow(x - h, 2)) return 1;
-        return 2;
+        if ((y - k) < p * Math.pow(x - h, 2)) return Colors.white;
+        return Colors.black;
     }
 
 

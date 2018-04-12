@@ -15,99 +15,56 @@ public class Simulation {
 
     private float[][] image;
     private float[][] startImg;
-    private List<Rule> rules;
-    private int showPercent;
+    private List<SimRule> simRules;
 
     private int cols;
     private int rows;
 
-    private FinalCondition finalCondition;
     private BlockingQueue<List<SimResult>> resultBlockingQueue;
-    int tries;
 
     private Random rand = new Random();
 
-    public Simulation(float[][] img, List<Rule> rules, BlockingQueue<List<SimResult>> resultBlockingQueue)
-    {
-    	this.image = img;
-        this.rules = rules;
-        
-        this.resultBlockingQueue = resultBlockingQueue;
-        
-        // all images are the same size
-        this.cols = img[0].length;
-        this.rows = img.length;
-    }
-    
-    public Simulation(float[][] img, List<Rule> rules, int showPercent, int tries, BlockingQueue<List<SimResult>> resultBlockingQueue) {
-        this.image = img;
-        this.rules = rules;
-        this.showPercent = showPercent;
-        this.tries = tries;
-
-        // all images are the same size
-        this.cols = img[0].length;
-        this.rows = img.length;
-
-        this.resultBlockingQueue = resultBlockingQueue;
-    }
-
-    public Simulation(float[][] img, float[][] startImg, List<Rule> rules, int tries, BlockingQueue<List<SimResult>> resultBlockingQueue) {
+    public Simulation(float[][] img, float[][] startImg, List<SimRule> rules, BlockingQueue<List<SimResult>> resultBlockingQueue) {
         this.image = img;
         this.startImg = startImg;
-        this.rules = rules;
-        this.tries = tries;
+        this.simRules = rules;
 
         // all images are the same size
         this.cols = img[0].length;
         this.rows = img.length;
 
         this.resultBlockingQueue = resultBlockingQueue;
-    }
-    
-    public void SetCondition(FinalCondition condition)
-    {
-    	this.finalCondition = condition;
     }
 
     public void run() {
 
         List<SimResult> simResults = new ArrayList<>();
 
-        rules.stream().forEach(rule -> {
-	
-        	if (rule.getColors().getClass() == ValuesOfColorsCCA.class) {
-        		startImg = Utils.imageColorToCCA(image);
-        	}
-        	else {
-        		startImg = image;
-        	}
+        simRules.stream().forEach(simRule -> {
         	
-        	float[][] hiddenImg = getHiddenImage(rule);
-        	
-            List<float[][]> finalImages = new ArrayList<>();
-            int[] diffs = new int[tries];
-            float[][] avgImage = hiddenImg;
+        	List<float[][]> finalImages = new ArrayList<>();
+            int[] diffs = new int[simRule.getTries()];
+            float[][] avgImage = startImg;
 
             // Gather some (2 - hardcoded) mid iteration samples
             List<float[][]> midIterSamples = new ArrayList<>();
 
-            for (int t = 0; t < tries; t++) {
+            for (int t = 0; t < simRule.getTries(); t++) {
 
                 List<float[][]> iterations = new ArrayList<>();
-                iterations.add(startImg); // Full img
+                iterations.add(image); // Full image
 
-                iterations.add(hiddenImg);
+                iterations.add(startImg);
 
                 //TODO: optimization for "Deterministic" rules
                 
-                for (int iter = 2; finalCondition.isFinished(iterations, iter); iter++) {
+                for (int iter = 2; simRule.getCondition().isFinished(iterations, iter); iter++) {
                 	
                     float[][] iterResult = new float[rows][cols];  //uninitialized
 
                     for (int i = 0; i < rows; i++) {
                         for (int j = 0; j < cols; j++) {
-                            iterResult[i][j] = rule.step(iterations.get(iter - 1), i, j);
+                            iterResult[i][j] = simRule.getRule().step(iterations.get(iter - 1), i, j);
                         }
                     }
                     
@@ -141,18 +98,18 @@ public class Simulation {
             int max = new Double(stats.getMax()).intValue();
 
             // Apply Stats Method
-            avgImage = Utils.avgImg(finalImages, rule.getColors());
+            avgImage = Utils.avgImg(finalImages);
             int avgMethodDiff = Utils.imgDiff(image, avgImage);
 
             // Gather some (3 - hardcoded) samples
             List<float[][]> samples = new ArrayList<>();
 
-            if (3 < tries) {
-                rand.ints(3, 0, tries).forEach(i -> samples.add(finalImages.get(i)));
+            if (3 < simRule.getTries()) {
+                rand.ints(3, 0, simRule.getTries()).forEach(i -> samples.add(finalImages.get(i)));
             }
 
             //SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, max, avgMethodDiff);
-            SimResult simResult = new SimResult(rule, image, hiddenImg, samples, midIterSamples, avgImage, mean, std, max, avgMethodDiff);
+            SimResult simResult = new SimResult(simRule.getRule(), image, startImg, samples, midIterSamples, avgImage, mean, std, max, avgMethodDiff);
             simResults.add(simResult);
             System.out.println(simResult);
         });
@@ -162,12 +119,5 @@ public class Simulation {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-    }
-
-    private float[][] getHiddenImage(Rule rule)
-    {
-        int cellsToShow = new Double(showPercent / 100.0 * cols * rows).intValue();
-        return Utils.hide(startImg, rule.getColors(), cellsToShow);
     }
 }

@@ -1,6 +1,8 @@
-package pl.edu.ug.caclassification.rule;
+package pl.edu.ug.caclassification.rule.ruleCCA;
 
 import java.util.List;
+
+import pl.edu.ug.caclassification.util.Colors;
 
 public class AverageRule extends RuleCCA {
 
@@ -9,10 +11,9 @@ public class AverageRule extends RuleCCA {
     }
 	
 	public float step(float[][] img, int row, int col) {
-		if (img[row][col] == 1.0)
-			return 1;
-		if (img[row][col] == 0.0)
-			return 0;
+		
+		if (img[row][col] == Colors.white || img[row][col] == Colors.black)
+			return img[row][col];
 		
 		List<Float> neigh = getNeighbours(img, row, col);
 		return calculateAverage(neigh);

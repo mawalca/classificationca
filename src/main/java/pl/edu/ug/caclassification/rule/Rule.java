@@ -2,18 +2,12 @@ package pl.edu.ug.caclassification.rule;
 
 import java.util.*;
 
-import pl.edu.ug.caclassification.util.ValuesOfColors;
-
 public abstract class Rule {
-
-    Random random = new Random();
 
     protected String name = "";
 
     abstract public float step(float[][] img, int row, int col);
     
-    abstract public ValuesOfColors getColors();
-
     public List<Float> getNeighbours(float[][] img, int row, int col) {
     	int cols = img[0].length;
         int rows = img.length;
