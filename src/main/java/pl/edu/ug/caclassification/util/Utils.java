@@ -3,20 +3,18 @@ package pl.edu.ug.caclassification.util;
 import pl.edu.ug.caclassification.simulation.SimResult;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class Utils {
 
-    public static byte[][] avgImg(List<byte[][]> images) {
+    public static float[][] avgImg(List<float[][]> images, ValuesOfColors colors) {
         int cols = images.get(0)[0].length;
         int rows = images.get(0).length;
 
-        byte[][] result = new byte[rows][cols];
+        float[][] result = new float[rows][cols];
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -25,30 +23,30 @@ public class Utils {
                 int whites = 0;
 
                 for (int k = 0; k < images.size(); k++) {
-                    byte value = images.get(k)[i][j];
-                    if (value == 1) whites++;
-                    else if (value == 2) blacks++;
+                    float value = images.get(k)[i][j];
+                    if (value == colors.getWhite()) whites++;
+                    else if (value == colors.getBlack()) blacks++;
                 }
 
-                if (blacks > whites) result[i][j] = 2;
-                else result[i][j] = 1;
+                if (blacks > whites) result[i][j] = colors.getBlack();
+                else result[i][j] = colors.getWhite();
             }
         }
         return result;
     }
 
-    public static byte[][] hide(byte[][] img, int cellsToShow) {
+    public static float[][] hide(float[][] img, ValuesOfColors colors, int cellsToShow) {
         int cols = img[0].length;
         int rows = img.length;
 
-        byte[][] result = new byte[rows][cols];
+        float[][] result = new float[rows][cols];
 
         Random random = new Random();
 
         //hide all
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
-                result[i][j] = 0;
+                result[i][j] = colors.getUnknown();
 
         //show only cellsToShow number of cells
         random.ints(cellsToShow, 0, rows * cols).forEach(cellNumber -> {
@@ -58,20 +56,41 @@ public class Utils {
         });
         return result;
     }
+    
+    public static float[][] imageColorToCCA(float[][] img) {
+    	ValuesOfColors colorsOld = new ValuesOfColorsBCA();
+    	ValuesOfColors colorsNew = new ValuesOfColorsCCA();
+    	
+        int cols = img[0].length;
+        int rows = img.length;
 
-    public static boolean isFullyShown(byte[][] img) {
+        float[][] result = new float[rows][cols];
+
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++) {
+                if (img[i][j] == colorsOld.getBlack())
+                	result[i][j] = colorsNew.getBlack();
+                else if (img[i][j] == colorsOld.getWhite())
+                	result[i][j] = colorsNew.getWhite();
+                else
+                	result[i][j] = colorsNew.getUnknown();
+            }
+        return result;
+    }
+
+    public static boolean isFullyShown(float[][] img, ValuesOfColors colors) {
         int cols = img[0].length;
         int rows = img.length;
         boolean result = true;
 
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
-                if (img[i][j] == 0) return false;
+                if (img[i][j] == colors.getUnknown()) return false;
 
         return result;
     }
 
-    public static String byteMatrixToString(byte[][] array) {
+    public static String byteMatrixToString(float[][] array) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[0].length; j++) {
@@ -84,8 +103,8 @@ public class Utils {
         return sb.toString();
     }
 
-    public static byte[][] buildDiagonalImg(int rows, int cols) {
-        byte[][] diagonalImg = new byte[rows][cols];
+    public static float[][] buildDiagonalImg(int rows, int cols) {
+        float[][] diagonalImg = new float[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (i < j) diagonalImg[i][j] = 1;
@@ -96,8 +115,8 @@ public class Utils {
     }
 
 //
-//    public static byte[][] buildParabolicImg(int rows, int cols) {
-//        byte[][] parabolaImg = new byte[rows][cols];
+//    public static float[][] buildParabolicImg(int rows, int cols) {
+//        float[][] parabolaImg = new float[rows][cols];
 //        for (int i = 0; i < rows; i++) {
 //            for (int j = 0; j < cols; j++) {
 //                parabolaImg[i][j] = computeParabolic(i, j);
@@ -106,16 +125,16 @@ public class Utils {
 //        return parabolaImg;
 //    }
 
-    public static byte[][] buildImageFromFile(Path path, List<Coordinates> coordinates) {
+    public static float[][] buildImageFromFile(Path path, List<Coordinates> coordinates) {
 
-        List<byte[]> lines = new LinkedList<>();
+        List<float[]> lines = new LinkedList<>();
         try {
             BufferedReader reader = Files.newBufferedReader(path);
             reader.lines().forEach(line -> {
                 String[] strNumbers = line.split(",");
-                byte[] numbers = new byte[strNumbers.length];
+                float[] numbers = new float[strNumbers.length];
                 for (int i = 0; i < numbers.length; i++) {
-                    numbers[i] = new Byte(strNumbers[i]);
+                    numbers[i] = new Float(strNumbers[i]);
                 }
                 lines.add(numbers);
             });
@@ -123,14 +142,14 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        byte[][] result = new byte[lines.size()][];
+        float[][] result = new float[lines.size()][];
         lines.toArray(result);
         return result;
     }
 
-    public static byte[][] buildParabolicImg(int size) {
+    public static float[][] buildParabolicImg(int size) {
 
-        byte[][] parabolaImg = new byte[size][size];
+        float[][] parabolaImg = new float[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 parabolaImg[i][j] = computeParabolic(i, j, size);
@@ -148,7 +167,7 @@ public class Utils {
 //        return 2;
 //    }
 
-    private static byte computeParabolic(int x, int y, int size) {
+    private static float computeParabolic(int x, int y, int size) {
 
         int k = new Double(0.2 * size).intValue();
         int h = size / 2;
@@ -161,7 +180,7 @@ public class Utils {
     }
 
 
-    public static int imgDiff(byte[][] img1, byte[][] img2) {
+    public static int imgDiff(float[][] img1, float[][] img2) {
         // assume the same shape
         int cols = img1[0].length;
         int rows = img1.length;

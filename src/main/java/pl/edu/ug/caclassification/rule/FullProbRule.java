@@ -4,22 +4,22 @@ import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 
 import java.util.Map;
 
-public class FullProbRule extends Rule {
+public class FullProbRule extends RuleBCA {
 
     public FullProbRule(String name) {
         this.name = name;
     }
 
-    public byte step(byte[][] img, int row, int col) {
+    public float step(float[][] img, int row, int col) {
 
         if (img[row][col] != 0) return img[row][col];
 
-        Map<Byte, Integer> countedClasses = countClasses(img, row, col);
+        Map<Float, Integer> countedClasses = countClasses(img, row, col);
 
-        int all = countedClasses.get((byte) 0) + countedClasses.get((byte) 1) + countedClasses.get((byte) 2);
-        double p0 = countedClasses.get((byte) 0) * 1.0 / all;
-        double p1 = countedClasses.get((byte) 1) * 1.0 / all;
-        double p2 = countedClasses.get((byte) 2) * 1.0 / all;
+        int all = countedClasses.get((float) 0) + countedClasses.get((float) 1) + countedClasses.get((float) 2);
+        double p0 = countedClasses.get((float) 0) * 1.0 / all;
+        double p1 = countedClasses.get((float) 1) * 1.0 / all;
+        double p2 = countedClasses.get((float) 2) * 1.0 / all;
 
         int[] sinletons = new int[]{0, 1, 2};
         double[] probs = new double[]{p0, p1, p2};

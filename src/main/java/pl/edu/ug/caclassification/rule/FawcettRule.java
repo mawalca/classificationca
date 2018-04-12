@@ -4,20 +4,20 @@ import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 
 import java.util.Map;
 
-public class FawcettRule extends Rule {
+public class FawcettRule extends RuleBCA {
 
     public FawcettRule(String name) {
         this.name = name;
     }
 
-    public byte step(byte[][] img, int row, int col) {
+    public float step(float[][] img, int row, int col) {
 
         if (img[row][col] != 0) return img[row][col];
 
-        Map<Byte, Integer> countedClasses = countClasses(img, row, col);
+        Map<Float, Integer> countedClasses = countClasses(img, row, col);
 
-        int c1 = countedClasses.get((byte) 1);
-        int c2 = countedClasses.get((byte) 2);
+        int c1 = countedClasses.get((float) 1);
+        int c2 = countedClasses.get((float) 2);
 
         if (c1 + c2 == 0) return 0;
         if (c1 > c2) return 1;

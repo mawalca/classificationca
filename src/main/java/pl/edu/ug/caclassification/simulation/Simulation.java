@@ -2,7 +2,9 @@ package pl.edu.ug.caclassification.simulation;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import pl.edu.ug.caclassification.rule.Rule;
+import pl.edu.ug.caclassification.simulation.finalcondition.FinalCondition;
 import pl.edu.ug.caclassification.util.Utils;
+import pl.edu.ug.caclassification.util.ValuesOfColorsCCA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,21 +13,34 @@ import java.util.concurrent.BlockingQueue;
 
 public class Simulation {
 
-    private byte[][] img;
-    private byte[][] startImg;
+    private float[][] image;
+    private float[][] startImg;
     private List<Rule> rules;
     private int showPercent;
 
     private int cols;
     private int rows;
 
+    private FinalCondition finalCondition;
     private BlockingQueue<List<SimResult>> resultBlockingQueue;
     int tries;
 
     private Random rand = new Random();
 
-    public Simulation(byte[][] img, List<Rule> rules, int showPercent, int tries, BlockingQueue<List<SimResult>> resultBlockingQueue) {
-        this.img = img;
+    public Simulation(float[][] img, List<Rule> rules, BlockingQueue<List<SimResult>> resultBlockingQueue)
+    {
+    	this.image = img;
+        this.rules = rules;
+        
+        this.resultBlockingQueue = resultBlockingQueue;
+        
+        // all images are the same size
+        this.cols = img[0].length;
+        this.rows = img.length;
+    }
+    
+    public Simulation(float[][] img, List<Rule> rules, int showPercent, int tries, BlockingQueue<List<SimResult>> resultBlockingQueue) {
+        this.image = img;
         this.rules = rules;
         this.showPercent = showPercent;
         this.tries = tries;
@@ -37,8 +52,8 @@ public class Simulation {
         this.resultBlockingQueue = resultBlockingQueue;
     }
 
-    public Simulation(byte[][] img, byte[][] startImg, List<Rule> rules, int tries, BlockingQueue<List<SimResult>> resultBlockingQueue) {
-        this.img = img;
+    public Simulation(float[][] img, float[][] startImg, List<Rule> rules, int tries, BlockingQueue<List<SimResult>> resultBlockingQueue) {
+        this.image = img;
         this.startImg = startImg;
         this.rules = rules;
         this.tries = tries;
@@ -49,47 +64,53 @@ public class Simulation {
 
         this.resultBlockingQueue = resultBlockingQueue;
     }
+    
+    public void SetCondition(FinalCondition condition)
+    {
+    	this.finalCondition = condition;
+    }
 
     public void run() {
-
-        byte[][] hiddenImg;
-        if (startImg == null) {
-            int cellsToShow = new Double(showPercent / 100.0 * cols * rows).intValue();
-            hiddenImg = Utils.hide(img, cellsToShow);
-        } else {
-            hiddenImg = startImg;
-        }
 
         List<SimResult> simResults = new ArrayList<>();
 
         rules.stream().forEach(rule -> {
-
-            List<byte[][]> finalImages = new ArrayList<>();
-
+	
+        	if (rule.getColors().getClass() == ValuesOfColorsCCA.class) {
+        		startImg = Utils.imageColorToCCA(image);
+        	}
+        	else {
+        		startImg = image;
+        	}
+        	
+        	float[][] hiddenImg = getHiddenImage(rule);
+        	
+            List<float[][]> finalImages = new ArrayList<>();
             int[] diffs = new int[tries];
-            byte[][] avgImage = hiddenImg;
+            float[][] avgImage = hiddenImg;
 
             // Gather some (2 - hardcoded) mid iteration samples
-            List<byte[][]> midIterSamples = new ArrayList<>();
+            List<float[][]> midIterSamples = new ArrayList<>();
 
             for (int t = 0; t < tries; t++) {
 
-                List<byte[][]> iterations = new ArrayList<>();
-                iterations.add(img); // Full img
+                List<float[][]> iterations = new ArrayList<>();
+                iterations.add(startImg); // Full img
 
                 iterations.add(hiddenImg);
 
                 //TODO: optimization for "Deterministic" rules
-                for (int iter = 2; !Utils.isFullyShown(iterations.get(iter - 1)); iter++) {
-
-                    byte[][] iterResult = new byte[rows][cols];  //uninitialized
+                
+                for (int iter = 2; finalCondition.isFinished(iterations, iter); iter++) {
+                	
+                    float[][] iterResult = new float[rows][cols];  //uninitialized
 
                     for (int i = 0; i < rows; i++) {
                         for (int j = 0; j < cols; j++) {
                             iterResult[i][j] = rule.step(iterations.get(iter - 1), i, j);
                         }
                     }
-
+                    
                     iterations.add(iterResult);
 
                     if (t == 0 && (iter == 5 || iter == 7)) {
@@ -98,13 +119,13 @@ public class Simulation {
 
                 }
 
-                byte[][] finalImage = iterations.get(iterations.size() - 1);
+                float[][] finalImage = iterations.get(iterations.size() - 1);
                 finalImages.add(finalImage);
 
-                int diff = Utils.imgDiff(img, finalImage);
+                int diff = Utils.imgDiff(image, finalImage);
                 diffs[t] = diff;
 
-                //System.out.println(Utils.byteMatrixToString(finalImage));
+                //System.out.println(Utils.floatMatrixToString(finalImage));
             }
 
             DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -120,18 +141,18 @@ public class Simulation {
             int max = new Double(stats.getMax()).intValue();
 
             // Apply Stats Method
-            avgImage = Utils.avgImg(finalImages);
-            int avgMethodDiff = Utils.imgDiff(img, avgImage);
+            avgImage = Utils.avgImg(finalImages, rule.getColors());
+            int avgMethodDiff = Utils.imgDiff(image, avgImage);
 
             // Gather some (3 - hardcoded) samples
-            List<byte[][]> samples = new ArrayList<>();
+            List<float[][]> samples = new ArrayList<>();
 
             if (3 < tries) {
                 rand.ints(3, 0, tries).forEach(i -> samples.add(finalImages.get(i)));
             }
 
             //SimResult simResult = new SimResult(rule, img, hiddenImg, samples, avgImage, mean, std, max, avgMethodDiff);
-            SimResult simResult = new SimResult(rule, img, hiddenImg, samples, midIterSamples, avgImage, mean, std, max, avgMethodDiff);
+            SimResult simResult = new SimResult(rule, image, hiddenImg, samples, midIterSamples, avgImage, mean, std, max, avgMethodDiff);
             simResults.add(simResult);
             System.out.println(simResult);
         });
@@ -144,4 +165,9 @@ public class Simulation {
 
     }
 
+    private float[][] getHiddenImage(Rule rule)
+    {
+        int cellsToShow = new Double(showPercent / 100.0 * cols * rows).intValue();
+        return Utils.hide(startImg, rule.getColors(), cellsToShow);
+    }
 }

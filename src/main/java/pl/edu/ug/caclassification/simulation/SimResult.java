@@ -7,18 +7,18 @@ import java.util.List;
 public class SimResult {
 
     private Rule rule;
-    private byte[][] img;
-    private byte[][] hiddenImg;
-    private List<byte[][]> samples;
-    private List<byte[][]> midIterSamples;
-    private byte[][] avgImage;
+    private float[][] img;
+    private float[][] hiddenImg;
+    private List<float[][]> samples;
+    private List<float[][]> midIterSamples;
+    private float[][] avgImage;
 
     private int statMethodDiff;
     private double mean;
     private double std;
     private int max;
 
-    public SimResult(Rule rule, byte[][] img, byte[][] hiddenImg, List<byte[][]> samples, List<byte[][]> midIterSamples, byte[][] avgImage, double mean, double std, int max, int statMethodDiff) {
+    public SimResult(Rule rule, float[][] img, float[][] hiddenImg, List<float[][]> samples, List<float[][]> midIterSamples, float[][] avgImage, double mean, double std, int max, int statMethodDiff) {
         this.rule = rule;
         this.img = img;
         this.hiddenImg = hiddenImg;
@@ -31,7 +31,7 @@ public class SimResult {
         this.midIterSamples = midIterSamples;
     }
 
-    public List<byte[][]> getMidIterSamples() {
+    public List<float[][]> getMidIterSamples() {
         return midIterSamples;
     }
 
@@ -39,19 +39,19 @@ public class SimResult {
         return max;
     }
 
-    public byte[][] getImg() {
+    public float[][] getImg() {
         return img;
     }
 
-    public byte[][] getHiddenImg() {
+    public float[][] getHiddenImg() {
         return hiddenImg;
     }
 
-    public List<byte[][]> getSamples() {
+    public List<float[][]> getSamples() {
         return samples;
     }
 
-    public byte[][] getAvgImage() {
+    public float[][] getAvgImage() {
         return avgImage;
     }
 

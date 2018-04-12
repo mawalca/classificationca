@@ -69,12 +69,17 @@ public class AwtViewerAll {
 
     }
 
-    private JComponent makeImg(byte[][] dataArray){
+    private JComponent makeImg(float[][] dataArray){
 
         final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         JComponent viewer = new JComponent() {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void paintComponent(Graphics g) {
                 g.drawImage(image, 0, 0, width, height, this);
             }
@@ -96,7 +101,7 @@ public class AwtViewerAll {
         return viewer;
     }
 
-    private int valToColor(byte val) {
+    private int valToColor(float val) {
         int res = 0;
         if (val == 0) res = 0x00aaaaaa;
         if (val == 1) res = 0xFFFFFFFF;

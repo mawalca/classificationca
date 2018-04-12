@@ -1,7 +1,6 @@
 package pl.edu.ug.caclassification;
 
 import pl.edu.ug.caclassification.simulation.SimResult;
-import pl.edu.ug.caclassification.util.Utils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -143,12 +142,12 @@ public class PrinterAndWatcherTask implements Runnable {
         }
     }
 
-    private void saveImg(Path path, byte[][] img) {
+    private void saveImg(Path path, float[][] img) {
 
         try {
             BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE);
 
-            for (byte[] line : img) {
+            for (float[] line : img) {
                 StringBuilder textLine = new StringBuilder();
                 for (int i = 0; i < line.length; i++) {
                     textLine.append(line[i]);

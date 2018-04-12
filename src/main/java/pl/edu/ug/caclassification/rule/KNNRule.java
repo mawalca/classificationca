@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class KNNRule extends Rule {
+public class KNNRule extends RuleBCA {
 
     private DistanceMeasure dm;
     private int k;
@@ -19,21 +19,21 @@ public class KNNRule extends Rule {
     }
 
     @Override
-    public byte step(byte[][] img, int row, int col) {
+    public float step(float[][] img, int row, int col) {
 
         if (img[row][col] != 0) return img[row][col];
 
-        Map<Byte, Integer> countedClasses = countClasses(img, row, col);
+        Map<Float, Integer> countedClasses = countClasses(img, row, col);
 
         int num1s = 0;
         int num2s = 0;
 
-        if (countedClasses.get((byte)1) != null) {
-            num1s = countedClasses.get((byte)1);
+        if (countedClasses.get((float)1) != null) {
+            num1s = countedClasses.get((float)1);
         }
 
-        if (countedClasses.get((byte)2) != null) {
-            num2s = countedClasses.get((byte)2);
+        if (countedClasses.get((float)2) != null) {
+            num2s = countedClasses.get((float)2);
         }
 
         if (num1s > num2s) return 1;
@@ -44,7 +44,7 @@ public class KNNRule extends Rule {
     }
 
     @Override
-    public Map<Byte, Integer> countClasses(byte[][] img, int row, int col) {
+    public Map<Float, Integer> countClasses(float[][] img, int row, int col) {
 
         int cols = img[0].length;
         int rows = img.length;
@@ -67,7 +67,7 @@ public class KNNRule extends Rule {
         List<Neighbour> kNeighbours = allNeighbours.subList(0, k);
 
 
-        List<Byte> neighClasses = new ArrayList<>();
+        List<Float> neighClasses = new ArrayList<>();
         for (int i = 0; i < kNeighbours.size(); i++) {
             int r = kNeighbours.get(i).getRow();
             int c = kNeighbours.get(i).getCol();
