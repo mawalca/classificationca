@@ -97,9 +97,9 @@ public abstract class RuleBCA extends Rule {
 
     protected static Map<Float, Integer> count(List<Float> neigh){
         Map<Float, Integer> result = new HashMap<>();
-        result.put(Colors.white, 0);
-        result.put(Colors.black, 0);
-        result.put(Colors.unknown, 0);
+        result.put(BaseColors.WHITE, 0);
+        result.put(BaseColors.BLACK, 0);
+        result.put(BaseColors.UNKNOWN, 0);
         neigh.forEach(value -> result.put(value, result.get(value) + 1));
         return result;
     }

@@ -1,6 +1,7 @@
 package pl.edu.ug.caclassification;
 
 import pl.edu.ug.caclassification.simulation.SimRule;
+import pl.edu.ug.caclassification.util.FullImage;
 
 public class ExperimentBuilder {
 
@@ -17,15 +18,9 @@ public class ExperimentBuilder {
 		return this;
 	}
 	
-	public ExperimentBuilder setFullImg(float[][] fullImg)
+	public ExperimentBuilder addFullImage(FullImage fullImage)
 	{
-		experiment.setFullImg(fullImg);
-		return this;
-	}
-	
-	public ExperimentBuilder setStartImg(float[][] startImg)
-	{
-		experiment.setStartImg(startImg);
+		experiment.addFullImage(fullImage);
 		return this;
 	}
 	

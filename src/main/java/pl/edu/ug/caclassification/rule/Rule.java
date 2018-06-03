@@ -5,6 +5,7 @@ import java.util.*;
 public abstract class Rule {
 
     protected String name = "";
+    protected boolean ifDiscret;
 
     abstract public float step(float[][] img, int row, int col);
     
@@ -95,6 +96,10 @@ public abstract class Rule {
         return neigh;
     }
 
+    public boolean ifDiscret() {
+    	return ifDiscret;
+    }
+    
     @Override
     public String toString() {
         return name;

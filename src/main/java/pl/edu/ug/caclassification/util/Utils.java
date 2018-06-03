@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 public class Utils {
 
     public static float[][] avgImg(List<float[][]> images) {
@@ -24,12 +26,12 @@ public class Utils {
 
                 for (int k = 0; k < images.size(); k++) {
                     float value = images.get(k)[i][j];
-                    if (value == Colors.white) whites++;
-                    else if (value == Colors.black) blacks++;
+                    if (value == BaseColors.WHITE) whites++;
+                    else if (value == BaseColors.BLACK) blacks++;
                 }
 
-                if (blacks > whites) result[i][j] = Colors.black;
-                else result[i][j] = Colors.white;
+                if (blacks > whites) result[i][j] = BaseColors.BLACK;
+                else result[i][j] = BaseColors.WHITE;
             }
         }
         return result;
@@ -46,7 +48,7 @@ public class Utils {
         //hide all
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
-                result[i][j] = Colors.unknown;
+                result[i][j] = BaseColors.UNKNOWN;
 
         //show only cellsToShow number of cells
         random.ints(cellsToShow, 0, rows * cols).forEach(cellNumber -> {
@@ -64,7 +66,7 @@ public class Utils {
 
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
-                if (img[i][j] == Colors.unknown) return false;
+                if (img[i][j] != BaseColors.WHITE || img[i][j] != BaseColors.BLACK) return false;
 
         return result;
     }
@@ -73,91 +75,14 @@ public class Utils {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[0].length; j++) {
-                if (array[i][j] == Colors.unknown) sb.append("-");
-                else if (array[i][j] == Colors.white) sb.append("B");
-                else if (array[i][j] == Colors.black) sb.append("C");
+                if (array[i][j] == BaseColors.UNKNOWN) sb.append("-");
+                else if (array[i][j] == BaseColors.WHITE) sb.append("B");
+                else if (array[i][j] == BaseColors.BLACK) sb.append("C");
             }
             sb.append("\n");
         }
         return sb.toString();
     }
-
-    public static float[][] buildDiagonalImg(int rows, int cols) {
-        float[][] diagonalImg = new float[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (i < j) diagonalImg[i][j] = Colors.white;
-                else diagonalImg[i][j] = Colors.black;
-            }
-        }
-        return diagonalImg;
-    }
-
-//
-//    public static float[][] buildParabolicImg(int rows, int cols) {
-//        float[][] parabolaImg = new float[rows][cols];
-//        for (int i = 0; i < rows; i++) {
-//            for (int j = 0; j < cols; j++) {
-//                parabolaImg[i][j] = computeParabolic(i, j);
-//            }
-//        }
-//        return parabolaImg;
-//    }
-
-    public static float[][] buildImageFromFile(Path path, List<Coordinates> coordinates) {
-
-        List<float[]> lines = new LinkedList<>();
-        try {
-            BufferedReader reader = Files.newBufferedReader(path);
-            reader.lines().forEach(line -> {
-                String[] strNumbers = line.split(",");
-                float[] numbers = new float[strNumbers.length];
-                for (int i = 0; i < numbers.length; i++) {
-                    numbers[i] = new Float(strNumbers[i]);
-                }
-                lines.add(numbers);
-            });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        float[][] result = new float[lines.size()][];
-        lines.toArray(result);
-        return result;
-    }
-
-    public static float[][] buildParabolicImg(int size) {
-
-        float[][] parabolaImg = new float[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                parabolaImg[i][j] = computeParabolic(i, j, size);
-            }
-        }
-        return parabolaImg;
-    }
-
-//    private static byte computeParabolic(int i, int j) {
-//
-//        if (-1 * j < (-1 * Math.pow((0.2 * i - 10), 2) - 20)) return 1;
-//
-//        //  if (-1 * j < (-1 * Math.pow((0.1 * i - 15), 2) - 80)) return 1;
-//        // -(0.1*x - 15)^2 - 80
-//        return 2;
-//    }
-
-    private static float computeParabolic(int x, int y, int size) {
-
-        int k = new Double(0.2 * size).intValue();
-        int h = size / 2;
-
-        double m = Math.pow(size - h, 2);
-        double p = (size - k) / m;
-
-        if ((y - k) < p * Math.pow(x - h, 2)) return Colors.white;
-        return Colors.black;
-    }
-
 
     public static int imgDiff(float[][] img1, float[][] img2) {
         // assume the same shape
@@ -172,13 +97,60 @@ public class Utils {
         }
         return result;
     }
+    
+    public static float imgError(float[][] originalImage, float[][] resultImage) {
+        // assume the same shape
+        int cols = originalImage[0].length;
+        int rows = originalImage.length;
 
-    public static void awtPrintSResults(List<SimResult> results) {
+        float result = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result += computeError(originalImage[i][j], resultImage[i][j]);
+            }
+        }
+        return result;
+    }
+    
+    public static float[][] getDiscretization(float[][] image) {
+        int cols = image[0].length;
+        int rows = image.length;
+
+        float[][] result = new float[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result[i][j] = (image[i][j] < 0.5) ? 0 : 1;
+            }
+        }
+        return result;
+    }
+
+	public static void awtPrintSResults(List<SimResult> results) {
 
         results.stream().forEach(simResult -> {
             new AwtViewerAll(simResult);
         });
+    }
+	
+    private static float computeError(float orig, float result) {
+		return Math.abs(orig - result);
+	}
+    
+    public static void cosTam(int[] diffs) {
 
+		DescriptiveStatistics stats = new DescriptiveStatistics();
+
+		// Add the data from the array
+		for (int i = 0; i < diffs.length; i++) {
+			stats.addValue(diffs[i]);
+		}
+
+		// Compute some statistics
+		double mean = stats.getMean();
+		double std = stats.getStandardDeviation();
+		int max = new Double(stats.getMax()).intValue();
+		
+		//int avgMethodDiff = Utils.imgDiff(image.getImage(), avgImage);
     }
 
 }

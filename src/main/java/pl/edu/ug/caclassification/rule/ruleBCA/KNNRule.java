@@ -2,7 +2,7 @@ package pl.edu.ug.caclassification.rule.ruleBCA;
 
 import org.apache.commons.math3.ml.distance.DistanceMeasure;
 
-import pl.edu.ug.caclassification.util.Colors;
+import pl.edu.ug.caclassification.util.BaseColors;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,26 +25,26 @@ public class KNNRule extends RuleBCA {
     @Override
     public float step(float[][] img, int row, int col) {
 
-        if (img[row][col] != Colors.unknown) return img[row][col];
+        if (img[row][col] != BaseColors.UNKNOWN) return img[row][col];
 
         Map<Float, Integer> countedClasses = countClasses(img, row, col);
 
         int numWhites = 0;
         int numBlacks = 0;
 
-        if (countedClasses.get(Colors.white) != null) {
-        	numWhites = countedClasses.get(Colors.white);
+        if (countedClasses.get(BaseColors.WHITE) != null) {
+        	numWhites = countedClasses.get(BaseColors.WHITE);
         }
 
-        if (countedClasses.get(Colors.black) != null) {
-            numBlacks = countedClasses.get(Colors.black);
+        if (countedClasses.get(BaseColors.BLACK) != null) {
+            numBlacks = countedClasses.get(BaseColors.BLACK);
         }
 
-        if (numWhites > numBlacks) return Colors.white;
-        if (numBlacks > numWhites) return Colors.black;
+        if (numWhites > numBlacks) return BaseColors.WHITE;
+        if (numBlacks > numWhites) return BaseColors.BLACK;
 
-        if (random.nextInt(2) < 1) return Colors.white;
-        return Colors.black;
+        if (random.nextInt(2) < 1) return BaseColors.WHITE;
+        return BaseColors.BLACK;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class KNNRule extends RuleBCA {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 // current is always class 0 (if !=0 we return immediately, see above)
-                if (img[i][j] != Colors.unknown) {
+                if (img[i][j] != BaseColors.UNKNOWN) {
                     double[] current = new double[]{row, col};
                     double[] neighbour = new double[]{i, j};
                     allNeighbours.add(new Neighbour(i, j, dm.compute(current, neighbour)));

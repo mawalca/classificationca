@@ -8,7 +8,11 @@ public class AllShownCondition extends FinalCondition {
 
 	@Override
 	public boolean isFinished(List<float[][]> iterations, int iter) {
-		return !Utils.isFullyShown(iterations.get(iter - 1));
+		return Utils.isFullyShown(iterations.get(iter - 1));
 	}
 
+	@Override
+	public String toString(){
+		return "allShown";
+	}
 }

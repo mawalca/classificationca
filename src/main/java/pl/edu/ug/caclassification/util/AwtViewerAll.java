@@ -26,8 +26,8 @@ public class AwtViewerAll {
 
         this.simResult = result;
 
-        sizeX = result.getHiddenImg().length;
-        sizeY = result.getHiddenImg()[0].length;
+        sizeX = result.getStartImg().length;
+        sizeY = result.getStartImg()[0].length;
 
         JFrame frame = new JFrame("Cellular automata");
 
@@ -36,19 +36,17 @@ public class AwtViewerAll {
 
 
         JLabel ruleLabel = new JLabel(result.getRule().toString());
-        JLabel statsLabel = new JLabel(result.getStatsString());
 
         frame.getContentPane().add(ruleLabel, BorderLayout.PAGE_START);
-        frame.getContentPane().add(statsLabel, BorderLayout.PAGE_END);
 
         JPanel imgsPanel = new JPanel(new FlowLayout());
 
         List<JComponent> images = new ArrayList<>();
 
-        images.add(makeImg(result.getImg()));
-        images.add(makeImg(result.getHiddenImg()));
-        images.add(makeImg(result.getAvgImage()));
-        result.getSamples().stream().forEach(sample -> images.add(makeImg(sample)));
+        images.add(makeImg(result.getOriginalImage()));
+        images.add(makeImg(result.getStartImg()));
+        images.add(makeImg(result.getFinalImg()));
+        result.getMidIterImgs().stream().forEach(sample -> images.add(makeImg(sample)));
 
         images.stream().forEach(image -> imgsPanel.add(image));
 

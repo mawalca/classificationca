@@ -1,21 +1,17 @@
 package pl.edu.ug.caclassification;
 
 import pl.edu.ug.caclassification.simulation.*;
-import pl.edu.ug.caclassification.util.Utils;
+import pl.edu.ug.caclassification.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 public class Experiment {
 
     private int simulations;
     private List<SimRule> rules;
-    private float[][] fullImg;
-    private float[][] startImg;
+    private List<FullImage> fullImages;
     private int percentToShow;
 
     private int threadPoolSize;
@@ -29,6 +25,7 @@ public class Experiment {
     {
     	simulations = 1;
     	rules = new ArrayList<>();
+    	fullImages = new ArrayList<>();
     	threadPoolSize = 1;
     }
     
@@ -45,12 +42,8 @@ public class Experiment {
 		this.rules.add(rule);
 	}
 
-	public void setFullImg(float[][] fullImg) {
-		this.fullImg = fullImg;
-	}
-
-	public void setStartImg(float[][] startImg) {
-		this.startImg = startImg;
+	public void addFullImage(FullImage fullImage) {
+		this.fullImages.add(fullImage);
 	}
 
 	public void setPercentToShow(int percentToShow) {
@@ -68,38 +61,54 @@ public class Experiment {
 	
 	public boolean isCorrect()
 	{
-		return fullImg != null && !rules.isEmpty() 
-				&& (startImg != null || percentToShow != 0);
+		return !fullImages.isEmpty() && !rules.isEmpty() 
+				&& percentToShow != 0;
 	}
 	
 	
 	public void start() {
 
-        ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
-        for (int i = 0; i < threadPoolSize; i++) {
-            executor.submit(new SimulationTask(simulationBlockingQueue));
-        }
+        ExecutorService executor = getExecutorWithSimulationTasks();
 
         // One experiment - many simulations
         for (int i = 0; i < simulations; i++) {
 
-            // One simulation - one random image for all triesInSimulation
-            Simulation simulation;
-            if (startImg == null) {
-            	int cellsToShow = new Double(percentToShow / 100.0 * fullImg[0].length * fullImg.length).intValue();
-            	float[][] img = Utils.hide(fullImg, cellsToShow);
-                simulation = new Simulation(fullImg, img, rules, resultBlockingQueue);
-            } else {
-                simulation = new Simulation(fullImg, startImg, rules, resultBlockingQueue);
-            }
-            
+            // One simulation - one random image
+            List<Simulation> simulations = getSimulations();
             try {
-                simulationBlockingQueue.put(simulation);
+            	for(Simulation simulation : simulations) {
+            		simulationBlockingQueue.put(simulation);
+            	}
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
         
-        watcherExecutor.submit(new PrinterAndWatcherTask(resultBlockingQueue, simulations, executor));
+        watcherExecutor.submit(new PrinterAndWatcherTask(resultBlockingQueue, simulations * fullImages.size(), executor));
     }
+
+	private ExecutorService getExecutorWithSimulationTasks() {
+		ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
+		for (int i = 0; i < threadPoolSize; i++) {
+			executor.submit(new SimulationTask(simulationBlockingQueue));
+		}
+		return executor;
+	}
+	
+	private List<Simulation> getSimulations() {
+		List<Simulation> result = new ArrayList<>();
+		
+		for(FullImage fullImage : fullImages) {
+			
+			float[][] startImage = getStartImage(fullImage.getImage());
+			Simulation simulation = new Simulation(fullImage, startImage, rules, resultBlockingQueue);
+			result.add(simulation);
+		}
+		return result;
+	}
+
+	private float[][] getStartImage(float[][] fullImage) {		
+		int cellsToShow = new Double(percentToShow / 100.0 * fullImage[0].length * fullImage.length).intValue();
+        return Utils.hide(fullImage, cellsToShow);
+	}
 }

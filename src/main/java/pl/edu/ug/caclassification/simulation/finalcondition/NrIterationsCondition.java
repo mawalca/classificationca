@@ -13,7 +13,11 @@ public class NrIterationsCondition extends FinalCondition {
 	
 	@Override
 	public boolean isFinished(List<float[][]> iterations, int iter) {
-		return iter < nrIterations;
+		return iter >= nrIterations;
 	}
 
+	@Override
+	public String toString(){
+		return nrIterations + "iters";
+	}
 }
