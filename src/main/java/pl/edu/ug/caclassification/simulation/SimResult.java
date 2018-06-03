@@ -14,6 +14,7 @@ public class SimResult {
 	private List<float[][]> samples;
 	private float[][] discretImg;
 	private int[] diffs;
+	private int nrIters;
 	
 	public SimRule getRule() {
 		return rule;
@@ -78,6 +79,14 @@ public class SimResult {
 
 	public void setDiffs(int[] diffs) {
 		this.diffs = diffs;
+	}
+
+	public int getNrIters() {
+		return nrIters;
+	}
+
+	public void setNrIters(int nrIters) {
+		this.nrIters = nrIters;
 	}
 
 	public float[][] getOriginalImage() {

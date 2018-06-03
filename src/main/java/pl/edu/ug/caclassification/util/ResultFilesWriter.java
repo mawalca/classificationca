@@ -23,33 +23,12 @@ public class ResultFilesWriter {
 	}
 	
 	public void saveErrors(List<SimResult> simResults, int actual) {
-		File dirError = new File(resultDirPath);
-		addErrorHeader(simResults, dirError);
-		
-		saveErrorToFile(simResults, dirError, actual);
-	}
-	
-	private void addErrorHeader(List<SimResult> simResults, File dirError) {
-		Path path = Paths.get(dirError.getAbsolutePath() + "/" + simResults.get(0).getImageName() + "Error.csv");
-		try {		
-			BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-			
-			StringBuilder header = new StringBuilder();
-			header.append("#");
-			simResults.forEach(simResult -> {
-				header.append(",");
-				header.append(simResult.getRuleName());
-				if (simResult.getDiscretImg() != null) {
-					header.append(", ");
-				}
-			});
-			writer.write(header.toString()); 
-            writer.newLine();
-            writer.flush();
-            writer.close();
-		} catch (IOException e) { 
-            System.err.format("IOException: %s%n", e);
+		File errorFile = new File(resultDirPath + "/" + simResults.get(0).getImageName() + "Error.csv");
+		if (!errorFile.exists()) {
+			addErrorHeader(simResults, errorFile);
 		}
+		
+		saveErrorToFile(simResults, errorFile, actual);
 	}
 
 	public void saveToFiles(SimResult simResult, int actual) {
@@ -91,11 +70,46 @@ public class ResultFilesWriter {
 		}
 	}
 	
-	private void saveErrorToFile(List<SimResult> simResults, File ruleDir, int actual) {
-		
-		Path path = Paths.get(ruleDir.getAbsolutePath() + "/" + simResults.get(0).getImageName() + "Error.csv");
+	private void addErrorHeader(List<SimResult> simResults, File errorFile) {
 		try {		
-			BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+			BufferedWriter writer = Files.newBufferedWriter(errorFile.toPath(),
+					StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+			
+			StringBuilder ruleHeader = new StringBuilder();
+			simResults.forEach(simResult -> {
+				ruleHeader.append(" ,");
+				ruleHeader.append(simResult.getRuleName());
+				ruleHeader.append(", , ");
+				if (simResult.getDiscretImg() != null) {
+					ruleHeader.append(",");
+				}
+			});
+			writer.write(ruleHeader.toString()); 
+            writer.newLine();
+            
+            StringBuilder colHeader = new StringBuilder();
+            colHeader.append("#");
+			simResults.forEach(simResult -> {
+				colHeader.append(",iters,diff,error");
+				if (simResult.getDiscretImg() != null) {
+					colHeader.append(",discret");
+				}
+			});
+			writer.write(colHeader.toString()); 
+            writer.newLine();
+            
+            writer.flush();
+            writer.close();
+		} catch (IOException e) { 
+            System.err.format("IOException: %s%n", e);
+		}
+	}
+	
+	private void saveErrorToFile(List<SimResult> simResults, File errorFile, int actual) {
+		
+		try {		
+			BufferedWriter writer = Files.newBufferedWriter(errorFile.toPath(),
+					StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 			
 			StringBuilder rSb = new StringBuilder();
             rSb.append(actual);            
@@ -103,6 +117,13 @@ public class ResultFilesWriter {
 			simResults.forEach(simResult -> {
 				
 				rSb.append(",");
+				rSb.append(simResult.getNrIters());
+				rSb.append(",");
+				
+				float diff = Utils.imgDiff(simResult.getOriginalImage(), simResult.getFinalImg());
+	            rSb.append(diff);
+	            rSb.append(",");
+	            
 	            float error = Utils.imgError(simResult.getOriginalImage(), simResult.getFinalImg());
 	            rSb.append(error);
 	            

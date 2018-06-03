@@ -36,6 +36,11 @@ public class WeightedMeanRule extends RuleCCA {
 		
 		return result;
 	}
+	
+    @Override
+    public String toString() {
+        return name + "-" + weightOne + "-" + weightTwo + "-" + weightThree;
+    }
 
 	private List<Float> getNeighOne(float[][] img, int row, int col) {
 		List<Float> neigh = new ArrayList<>();

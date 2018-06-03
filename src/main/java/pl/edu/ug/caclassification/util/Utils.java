@@ -2,10 +2,6 @@ package pl.edu.ug.caclassification.util;
 
 import pl.edu.ug.caclassification.simulation.SimResult;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;

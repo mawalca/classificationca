@@ -22,6 +22,8 @@ public class Simulation {
 	private Random rand = new Random();
 	private int amountOfSamples = 4;
 	private int amountOfTrySamples = 3;
+	
+	private int lastIter;
 
 	public Simulation(FullImage image, float[][] startImg, List<SimRule> rules,
 			BlockingQueue<List<SimResult>> resultBlockingQueue) {
@@ -100,6 +102,7 @@ public class Simulation {
 				.setFullImage(image)
 				.setStartImage(startImg)
 				.setFinalImage(avgImage)
+				.setNrIters(lastIter)
 				.setMidIterImages(midIterImgs)
 				.setSamples(samples);
 		
@@ -123,7 +126,8 @@ public class Simulation {
 				.setFullImage(image)
 				.setStartImage(startImg)
 				.setMidIterImages(midIterImgs)
-				.setFinalImage(finalImg);
+				.setFinalImage(finalImg)
+				.setNrIters(lastIter);
 		
 		if(simRule.ifDiscret()) {
 			simResultBuilder.setDiscretImage(Utils.getDiscretization(finalImg));
@@ -157,6 +161,7 @@ public class Simulation {
 				}
 			}
 			iterations.add(iterResult);
+			lastIter = iter;
 		}
 		return iterations;
 	}

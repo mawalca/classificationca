@@ -52,6 +52,11 @@ public class SimResultBuilder {
 		return this;
 	}
 	
+	public SimResultBuilder setNrIters(int nrIters) {
+		this.simResult.setNrIters(nrIters);
+		return this;
+	}
+	
 	public SimResult build() {
 		return simResult;
 	}
