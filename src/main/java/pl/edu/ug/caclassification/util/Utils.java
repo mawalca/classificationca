@@ -66,7 +66,8 @@ public class Utils {
 
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
-                if (img[i][j] != BaseColors.WHITE || img[i][j] != BaseColors.BLACK) return false;
+                if (img[i][j] != BaseColors.WHITE && img[i][j] != BaseColors.BLACK)
+                	return false;
 
         return result;
     }
