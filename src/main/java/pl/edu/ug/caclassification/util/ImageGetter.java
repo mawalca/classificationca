@@ -85,11 +85,11 @@ public class ImageGetter {
     }
     
     private static boolean isEmoji(double row, double col) {
-		boolean isLeftEye = Math.pow(row - 0.7, 2) + Math.pow(col - 0.3, 2) <= 0.01;
+		boolean isLeftEye = Math.pow(row - 0.3, 2) + Math.pow(col - 0.3, 2) <= 0.01;
 		if (isLeftEye) return true;
-		boolean isRightEye = Math.pow(row - 0.7, 2) + Math.pow(col - 0.7, 2) <= 0.01;
+		boolean isRightEye = Math.pow(row - 0.3, 2) + Math.pow(col - 0.7, 2) <= 0.01;
 		if (isRightEye) return true;
-		boolean isMouth = 0.2 <= row && row <= 0.4 && 0.1 <= col && col <= 0.9;
+		boolean isMouth = 0.6 <= row && row <= 0.8 && 0.1 <= col && col <= 0.9;
 		return isMouth;
 	}
 	

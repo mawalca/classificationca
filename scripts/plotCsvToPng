@@ -1,4 +1,11 @@
 set term png
 set output pngname
 set datafile separator ","
+set xrange [0:100]
+set yrange [0:100] reverse
+
+stats csvname matrix using 3 nooutput
+set cbrange [STATS_min:STATS_max]
+set palette defined (STATS_min "white", 0.5 "#34ccff", STATS_max "black" )
+
 plot csvname matrix with image

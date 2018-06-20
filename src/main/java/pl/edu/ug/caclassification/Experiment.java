@@ -84,7 +84,8 @@ public class Experiment {
             }
         }
         
-        watcherExecutor.submit(new PrinterAndWatcherTask(resultBlockingQueue, simulations * fullImages.size(), executor));
+        watcherExecutor.submit(
+        		new PrinterAndWatcherTask(resultBlockingQueue, simulations * fullImages.size(), percentToShow, executor));
     }
 
 	private ExecutorService getExecutorWithSimulationTasks() {

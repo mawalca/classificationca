@@ -13,12 +13,14 @@ public class PrinterAndWatcherTask implements Runnable {
 	private BlockingQueue<List<SimResult>> resultBlockingQueue;
 	private int expected;
 	private int actual = 0;
+	private int percent;
 	private ExecutorService executor;
 
 	public PrinterAndWatcherTask(BlockingQueue<List<SimResult>> resultBlockingQueue, int expected,
-			ExecutorService executor) {
+			int percent, ExecutorService executor) {
 		this.resultBlockingQueue = resultBlockingQueue;
 		this.expected = expected;
+		this.percent = percent;
 		this.executor = executor;
 	}
 
@@ -27,7 +29,7 @@ public class PrinterAndWatcherTask implements Runnable {
 
 		System.out.println("Printer and Watcher Task started");
 
-		ResultFilesWriter resultWriter = new ResultFilesWriter();
+		ResultFilesWriter resultWriter = new ResultFilesWriter(percent);
 
 		try {
 			while (actual < expected) {

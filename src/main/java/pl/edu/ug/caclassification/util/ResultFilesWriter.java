@@ -17,8 +17,8 @@ public class ResultFilesWriter {
 
 	private String resultDirPath;
 	
-	public ResultFilesWriter() {
-		resultDirPath = getResultDirPath();
+	public ResultFilesWriter(int percent) {
+		resultDirPath = getResultDirPath(percent);
 		(new File(resultDirPath)).mkdirs();
 	}
 	
@@ -154,9 +154,9 @@ public class ResultFilesWriter {
 		return simDirPath;
 	}
 
-	private String getResultDirPath() {
+	private String getResultDirPath(int percent) {
 		String dateName = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss").format(new Date());
-		return "./results/" + dateName;
+		return "./results/" + dateName + "_" + percent;
 	}
 	
 	private File getImageDirPathAndSaveOrigImage(SimResult simResult) {
