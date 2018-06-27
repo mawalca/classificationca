@@ -26,8 +26,8 @@ public class AwtViewerAll {
 
         this.simResult = result;
 
-        sizeX = result.getHiddenImg().length;
-        sizeY = result.getHiddenImg()[0].length;
+        sizeX = result.getStartImg().length;
+        sizeY = result.getStartImg()[0].length;
 
         JFrame frame = new JFrame("Cellular automata");
 
@@ -36,19 +36,17 @@ public class AwtViewerAll {
 
 
         JLabel ruleLabel = new JLabel(result.getRule().toString());
-        JLabel statsLabel = new JLabel(result.getStatsString());
 
         frame.getContentPane().add(ruleLabel, BorderLayout.PAGE_START);
-        frame.getContentPane().add(statsLabel, BorderLayout.PAGE_END);
 
         JPanel imgsPanel = new JPanel(new FlowLayout());
 
         List<JComponent> images = new ArrayList<>();
 
-        images.add(makeImg(result.getImg()));
-        images.add(makeImg(result.getHiddenImg()));
-        images.add(makeImg(result.getAvgImage()));
-        result.getSamples().stream().forEach(sample -> images.add(makeImg(sample)));
+        images.add(makeImg(result.getOriginalImage()));
+        images.add(makeImg(result.getStartImg()));
+        images.add(makeImg(result.getFinalImg()));
+        result.getMidIterImgs().stream().forEach(sample -> images.add(makeImg(sample)));
 
         images.stream().forEach(image -> imgsPanel.add(image));
 
@@ -69,12 +67,17 @@ public class AwtViewerAll {
 
     }
 
-    private JComponent makeImg(byte[][] dataArray){
+    private JComponent makeImg(float[][] dataArray){
 
         final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         JComponent viewer = new JComponent() {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void paintComponent(Graphics g) {
                 g.drawImage(image, 0, 0, width, height, this);
             }
@@ -96,7 +99,7 @@ public class AwtViewerAll {
         return viewer;
     }
 
-    private int valToColor(byte val) {
+    private int valToColor(float val) {
         int res = 0;
         if (val == 0) res = 0x00aaaaaa;
         if (val == 1) res = 0xFFFFFFFF;

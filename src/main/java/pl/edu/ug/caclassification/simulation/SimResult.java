@@ -1,99 +1,107 @@
 package pl.edu.ug.caclassification.simulation;
 
-import pl.edu.ug.caclassification.rule.Rule;
-
 import java.util.List;
+
+import pl.edu.ug.caclassification.util.FullImage;
 
 public class SimResult {
 
-    private Rule rule;
-    private byte[][] img;
-    private byte[][] hiddenImg;
-    private List<byte[][]> samples;
-    private List<byte[][]> midIterSamples;
-    private byte[][] avgImage;
+	protected SimRule rule;
+	protected FullImage origImg;
+	protected float[][] startImg;
+	protected List<float[][]> midIterImgs;
+	protected float[][] finalImg;
+	private List<float[][]> samples;
+	private float[][] discretImg;
+	private int[] diffs;
+	private int nrIters;
+	
+	public SimRule getRule() {
+		return rule;
+	}
+	
+	public void setRule(SimRule rule) {
+		this.rule = rule;
+	}
 
-    private int statMethodDiff;
-    private double mean;
-    private double std;
-    private int max;
+	public float[][] getStartImg() {
+		return startImg;
+	}
+	
+	public void setStartImg(float[][] startImg) {
+		this.startImg = startImg;
+	}
 
-    public SimResult(Rule rule, byte[][] img, byte[][] hiddenImg, List<byte[][]> samples, List<byte[][]> midIterSamples, byte[][] avgImage, double mean, double std, int max, int statMethodDiff) {
-        this.rule = rule;
-        this.img = img;
-        this.hiddenImg = hiddenImg;
-        this.samples = samples;
-        this.avgImage = avgImage;
-        this.mean = mean;
-        this.std = std;
-        this.statMethodDiff = statMethodDiff;
-        this.max = max;
-        this.midIterSamples = midIterSamples;
-    }
+	public List<float[][]> getMidIterImgs() {
+		return midIterImgs;
+	}
 
-    public List<byte[][]> getMidIterSamples() {
-        return midIterSamples;
-    }
 
-    public int getMax() {
-        return max;
-    }
+	public void setMidIterImgs(List<float[][]> midIterImgs) {
+		this.midIterImgs = midIterImgs;
+	}
+	
+	public FullImage getOrigImg() {
+		return origImg;
+	}
 
-    public byte[][] getImg() {
-        return img;
-    }
+	public void setOrigImg(FullImage origImg) {
+		this.origImg = origImg;
+	}
 
-    public byte[][] getHiddenImg() {
-        return hiddenImg;
-    }
+	public float[][] getFinalImg() {
+		return finalImg;
+	}
+	
+	public void setFinalImg(float[][] finalImg) {
+		this.finalImg = finalImg;
+	}
+	
+	public List<float[][]> getSamples() {
+		return samples;
+	}
 
-    public List<byte[][]> getSamples() {
-        return samples;
-    }
+	public void setSamples(List<float[][]> samples) {
+		this.samples = samples;
+	}
 
-    public byte[][] getAvgImage() {
-        return avgImage;
-    }
+	public float[][] getDiscretImg() {
+		return discretImg;
+	}
 
-    public double getMean() {
-        return mean;
-    }
+	public void setDiscretImg(float[][] discretImg) {
+		this.discretImg = discretImg;
+	}
 
-    public double getStd() {
-        return std;
-    }
+	public int[] getDiffs() {
+		return diffs;
+	}
 
-    public int getStatMethodDiff() {
-        return statMethodDiff;
-    }
+	public void setDiffs(int[] diffs) {
+		this.diffs = diffs;
+	}
 
-    public Rule getRule() {
-        return rule;
-    }
+	public int getNrIters() {
+		return nrIters;
+	}
 
-    public String getStatsString(){
-        StringBuilder sb = new StringBuilder();
+	public void setNrIters(int nrIters) {
+		this.nrIters = nrIters;
+	}
 
-        sb.append(" Mean: ");
-        sb.append(String.format("%.2f", mean));
-
-        sb.append(" Std: ");
-        sb.append(String.format("%.2f", std));
-
-        sb.append(" StatMethodDiff: ");
-        sb.append(statMethodDiff);
-
-        sb.append(" MaxDiff: ");
-        sb.append(max);
-
-        return sb.toString();
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n" + rule);
-        sb.append(getStatsString());
-        return sb.toString();
-    }
+	public float[][] getOriginalImage() {
+		return origImg.getImage();
+	}
+	
+	public String getImageName() {
+		return origImg.getName();
+	}
+	
+	public String getRuleName() {
+		return rule.getRule().toString();
+	}
+	
+	public static SimResultBuilder newBuilder() {
+		return new SimResultBuilder();
+	}
 }

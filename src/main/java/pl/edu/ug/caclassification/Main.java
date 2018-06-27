@@ -1,44 +1,43 @@
 package pl.edu.ug.caclassification;
 
-import pl.edu.ug.caclassification.rule.FawcettRule;
-import pl.edu.ug.caclassification.rule.FullProbRule;
 import pl.edu.ug.caclassification.rule.Rule;
-import pl.edu.ug.caclassification.util.Utils;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
+import pl.edu.ug.caclassification.rule.ruleBCA.FullProbRule;
+import pl.edu.ug.caclassification.rule.ruleCCA.AverageRule;
+import pl.edu.ug.caclassification.rule.ruleCCA.AverageWithLevelRule;
+import pl.edu.ug.caclassification.rule.ruleCCA.WeightedMeanRule;
+import pl.edu.ug.caclassification.simulation.SimRule;
+import pl.edu.ug.caclassification.simulation.finalcondition.*;
+import pl.edu.ug.caclassification.util.*;
 
 public class Main {
     public static void main(String[] args) {
 
         Rule fpRule = new FullProbRule("FPr");
-        //Rule ppRule = new PartiallyProbRule("PPr");
-        // Rule knn5Rule = new KNNRule(new EuclideanDistance(), 5, "K5nn");
-        Rule fawcettRule = new FawcettRule("Faw");
+    	Rule avgRule = new AverageRule("Average");
+    	Rule avgDiscRule = new AverageRule("AverageDisc", true);
+    	Rule avgLvl1Rule = new AverageWithLevelRule("Level", 0.1f, true);
+    	Rule weightMeanRule = new WeightedMeanRule("Weight", 3, 2, 1, true);
 
-        List<Rule> rules = new ArrayList<>();
-        rules.add(fpRule);
-        //rules.add(ppRule);
-        rules.add(fawcettRule);
-        //rules.add(knn5Rule);
+    	float[][] parabolicImg = ImageGetter.buildParabolicImg(100);
+        float[][] emojiImg = ImageGetter.buildEmojiImg(100);
 
-        byte[][] diagonalImg = Utils.buildDiagonalImg(100, 100);
-        //byte[][] diagonalImg = Utils.buildDiagonalImg(50, 50);
-        //byte[][] parabolicImg = Utils.buildParabolicImg(100, 100);
-        byte[][] parabolicImg = Utils.buildParabolicImg(100);
-
-        //Path path = Paths.get("./images/PFvsFawcetImgsDiagonal50x50_03/4/Faw_hiddenImg.csv");
-        //byte[][] startImg = Utils.buildImageFromFile(path, null);
-
-        //System.out.printf(Utils.byteMatrixToString(diagonalImg));
-
-        Experiment experiment = new Experiment(1, rules, parabolicImg, 99, 1, 3);
-//        Experiment experiment = new Experiment(diagonalImg, startImg, rules, 99);
-
+        Experiment experiment = Experiment.newBuilder()
+			.setSimulations(1)
+			
+        	//.addRule(new SimRule(fpRule, new AllShownCondition(), 10))
+			//.addRule(new SimRule(avgRule, new NrIterationsCondition(400)))
+			//.addRule(new SimRule(avgDiscRule, new AllShownOrNoDiffCondition()))
+			//.addRule(new SimRule(avgLvl1Rule, new AllShownOrNoDiffCondition()))
+			.addRule(new SimRule(weightMeanRule, new AllShownOrNoDiffCondition()))
+			
+			.addFullImage(new FullImage("parabolic", parabolicImg))
+			.addFullImage(new FullImage("emoji", emojiImg))
+			.setPercentToShow(3)
+			
+			.setThreadPoolSize(1)
+			.build();
+        		
+        
         experiment.start();
-        //Utils.awtPrintSResults(experiment.getExperimentResults().get(0));
     }
 }
